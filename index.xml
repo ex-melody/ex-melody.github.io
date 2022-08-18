@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Melody FOR Autumn</title>
+    <link>https://ex-melody.github.io/</link>
+    <description>Recent content on Melody FOR Autumn</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 18 Aug 2022 05:49:55 +0000</lastBuildDate><atom:link href="https://ex-melody.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>My First Post</title>
+      <link>https://ex-melody.github.io/posts/my-first-post/</link>
+      <pubDate>Thu, 18 Aug 2022 05:49:55 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/posts/my-first-post/</guid>
+      <description>test</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>https://ex-melody.github.io/about/</link>
+      <pubDate>Thu, 18 Aug 2022 04:09:20 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/about/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://ex-melody.github.io/readme/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/readme/</guid>
+      <description>hugoPosts </description>
+    </item>
+    
+  </channel>
+</rss>
