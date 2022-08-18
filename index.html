@@ -120,11 +120,23 @@
       <div class="blah w-100">
         <h1 class="f3 fw1 athelas mt0 lh-title">
           <a href="/posts/my-first-post/" class="color-inherit dim link">
-            My First Post
+            ebay api新增签名机制
             </a>
         </h1>
         <div class="f6 f5-l lh-copy nested-copy-line-height nested-links">
-          test dssada
+          部分站点因为新的安全政策，API请求新增的四个header  x-ebay-signature-key
+将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
+  将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。
+  为api请求的body内容计算摘要content-digest，作为请求header Content-Digest
+  ebay已经指定 header signature-Input 为
+sig1=(&ldquo;content-digest&rdquo; &ldquo;x-ebay-signature-key&rdquo; &ldquo;@method&rdquo; &ldquo;@path&rdquo; &ldquo;@authority&rdquo;);created=1658272908
+代表要根据content-digest，x-ebay-signature-key两个请求头的内容和http请求的&quot;@method&quot; &ldquo;@path&rdquo; &ldquo;@authority&quot;属性拼接signatureBase。 可直接通过URI对象获取这些@开头的属性。
+URI uri = URI.create(url); String method = uri.getMethod();
+  使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
+  拼接signature base的格式要求 详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
+signature base每一行都是&quot;key&rdquo;: value\n的形式，key用&quot;&ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
+signature-Input:sig1=(&quot;content-digest&quot; &quot;x-ebay-signature-key&quot; &quot;@method&quot; &quot;@path&quot; &quot;@authority&quot;);created=1658272908 @signature-params指拼接signture-base所有的参数，与signature-Input是对应的， 所以signatureBase的最后一行是
+&quot;@signature-params&quot;: (&quot;content-digest&quot; &quot;x-ebay-signature-key&quot; &quot;@method&quot; &quot;@path&quot; &quot;@authority&quot;);created=1660628866 created后面附加的是时间戳。
         </div>
           <a href="/posts/my-first-post/" class="ba b--moon-gray bg-light-gray br2 color-inherit dib f7 hover-bg-moon-gray link mt2 ph2 pv1">read more</a>
         
