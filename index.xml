@@ -21,7 +21,7 @@ URI uri = URI.create(url); String method = uri.getMethod();
   使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
   拼接signature base的格式要求   详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
   signature base每一行都是&amp;quot;key&amp;rdquo;: value\n的形式，key用&amp;quot;&amp;ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
-  signature-Input:sig1=(&amp;quot;content-digest&amp;quot; &amp;quot;x-ebay-signature-key&amp;quot; &amp;quot;@method&amp;quot; &amp;quot;@path&amp;quot; &amp;quot;@authority&amp;quot;);created=1658272908   created后面附加的是时间戳。</description>
+  signature-Input:sig1=(&amp;#34;content-digest&amp;#34; &amp;#34;x-ebay-signature-key&amp;#34; &amp;#34;@method&amp;#34; &amp;#34;@path&amp;#34; &amp;#34;@authority&amp;#34;);created=1658272908   created后面附加的是时间戳。</description>
     </item>
     
     <item>
