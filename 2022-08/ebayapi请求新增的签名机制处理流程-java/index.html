@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html><head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>ebayAPI请求新增的签名机制处理流程，java - Melody FOR Autumn</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="部分站点因为新的安全政策，API请求需要额外新增四个header  x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
+  将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。
+  为api请求的body内容计算摘要content-digest，作为请求header Content-Digest
+  ebay已经指定 header signature-Input 为sig1=(&ldquo;content-digest&rdquo; &ldquo;x-ebay-signature-key&rdquo; &ldquo;@method&rdquo; &ldquo;@path&rdquo; &ldquo;@authority&rdquo;);created=1658272908代表要根据content-digest，x-ebay-signature-key两个请求头的内容和http请求的&quot;@method&quot; &ldquo;@path&rdquo; &ldquo;@authority&quot;属性拼接signatureBase。 可直接通过URI对象获取这些@开头的属性。
+URI uri = URI.create(url); String method = uri.getMethod();
+  使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
+  拼接signature base的格式要求   详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
+  signature base每一行都是&quot;key&rdquo;: value\n的形式，key用&quot;&ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
+  signature-Input:sig1=(&#34;content-digest&#34; &#34;x-ebay-signature-key&#34; &#34;@method&#34; &#34;@path&#34; &#34;@authority&#34;);created=1658272908   created后面附加的是时间戳。" />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="ebayAPI请求新增的签名机制处理流程，java" />
+<meta property="og:description" content="部分站点因为新的安全政策，API请求需要额外新增四个header  x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
+  将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。
+  为api请求的body内容计算摘要content-digest，作为请求header Content-Digest
+  ebay已经指定 header signature-Input 为sig1=(&ldquo;content-digest&rdquo; &ldquo;x-ebay-signature-key&rdquo; &ldquo;@method&rdquo; &ldquo;@path&rdquo; &ldquo;@authority&rdquo;);created=1658272908代表要根据content-digest，x-ebay-signature-key两个请求头的内容和http请求的&quot;@method&quot; &ldquo;@path&rdquo; &ldquo;@authority&quot;属性拼接signatureBase。 可直接通过URI对象获取这些@开头的属性。
+URI uri = URI.create(url); String method = uri.getMethod();
+  使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
+  拼接signature base的格式要求   详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
+  signature base每一行都是&quot;key&rdquo;: value\n的形式，key用&quot;&ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
+  signature-Input:sig1=(&#34;content-digest&#34; &#34;x-ebay-signature-key&#34; &#34;@method&#34; &#34;@path&#34; &#34;@authority&#34;);created=1658272908   created后面附加的是时间戳。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://ex-melody.github.io/2022-08/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/" /><meta property="article:section" content="2022-08" />
+<meta property="article:published_time" content="2022-08-18T05:49:55+00:00" />
+<meta property="article:modified_time" content="2022-08-18T05:49:55+00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="ebayAPI请求新增的签名机制处理流程，java"/>
+<meta name="twitter:description" content="部分站点因为新的安全政策，API请求需要额外新增四个header  x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
+  将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。
+  为api请求的body内容计算摘要content-digest，作为请求header Content-Digest
+  ebay已经指定 header signature-Input 为sig1=(&ldquo;content-digest&rdquo; &ldquo;x-ebay-signature-key&rdquo; &ldquo;@method&rdquo; &ldquo;@path&rdquo; &ldquo;@authority&rdquo;);created=1658272908代表要根据content-digest，x-ebay-signature-key两个请求头的内容和http请求的&quot;@method&quot; &ldquo;@path&rdquo; &ldquo;@authority&quot;属性拼接signatureBase。 可直接通过URI对象获取这些@开头的属性。
+URI uri = URI.create(url); String method = uri.getMethod();
+  使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
+  拼接signature base的格式要求   详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
+  signature base每一行都是&quot;key&rdquo;: value\n的形式，key用&quot;&ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
+  signature-Input:sig1=(&#34;content-digest&#34; &#34;x-ebay-signature-key&#34; &#34;@method&#34; &#34;@path&#34; &#34;@authority&#34;);created=1658272908   created后面附加的是时间戳。"/>
+
+	
+        <link href="https://ex-melody.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://ex-melody.github.io/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://ex-melody.github.io/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css" media="(prefers-color-scheme: dark)"  />
+	
+	
+	
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://ex-melody.github.io">Melody FOR Autumn</a>
+	</div>
+	<nav>
+		
+		<a href="/">Home</a>
+		
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">ebayAPI请求新增的签名机制处理流程，java</h1>
+			<div class="meta">Posted on Aug 18, 2022 <span class="draft-label">DRAFT</span> </div>
+		</div>
+		
+
+		<section class="body">
+			<h1 id="部分站点因为新的安全政策api请求需要额外新增四个header">部分站点因为新的安全政策，API请求需要额外新增四个header</h1>
+<ul>
+<li>x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载</li>
+<li>Content-Digest
+http请求body的内容摘要,使用SHA-256算法处理body生成摘要</li>
+<li>Signature-Input 决定由哪些字段拼接为signature-base</li>
+<li>Signature   通过私钥对signature-base进行签名的得到</li>
+<li>请求头的名字大小写不敏感</li>
+</ul>
+<h1 id="流程">流程</h1>
+<ul>
+<li>
+<p>通过ebay未来提供的api下载公钥私钥文件。</p>
+</li>
+<li>
+<p>将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。</p>
+</li>
+<li>
+<p>为api请求的body内容计算摘要content-digest，作为请求header Content-Digest</p>
+</li>
+<li>
+<p>ebay已经指定 header signature-Input
+为sig1=(&ldquo;content-digest&rdquo; &ldquo;x-ebay-signature-key&rdquo; &ldquo;@method&rdquo; &ldquo;@path&rdquo; &ldquo;@authority&rdquo;);created=1658272908代表要根据content-digest，x-ebay-signature-key两个请求头的内容和http请求的&quot;@method&quot; &ldquo;@path&rdquo; &ldquo;@authority&quot;属性拼接signatureBase。
+可直接通过URI对象获取这些@开头的属性。</p>
+<p><code>URI uri = URI.create(url); String method = uri.getMethod();</code></p>
+</li>
+<li>
+<p>使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。</p>
+</li>
+</ul>
+<h1 id="拼接signature-base的格式要求">拼接signature base的格式要求</h1>
+<ul>
+<li>
+<p>详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html</p>
+</li>
+<li>
+<p>signature base每一行都是&quot;key&rdquo;: value\n的形式，key用&quot;&ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。
+ebay指定了请求header signature-Input为</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">signature-Input:sig1=(&#34;content-digest&#34; &#34;x-ebay-signature-key&#34; &#34;@method&#34; &#34;@path&#34; &#34;@authority&#34;);created=1658272908
+</code></pre></div><ul>
+<li>
+<p>created后面附加的是时间戳。</p>
+</li>
+<li>
+<p>@signature-params指拼接signture-base用到的所有参数，与signature-Input是对应的，放在最后一行</p>
+</li>
+<li>
+<p>拼接完成的sinatureBase</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">&#34;content-digest&#34;: sha-256=:X48E9qOokqqrvdts8nOJRJN3OWDUoyWxBf7kbu9DBPE=: 
+&#34;x-ebay-signature-key&#34;: publicKey 
+&#34;@method&#34;: POST   
+&#34;@path&#34;: /verifysignature  
+&#34;@authority&#34;: localhost:8080  
+&#34;@signature-params&#34;: (&#34;content-digest&#34; &#34;x-ebay-signature-key&#34; &#34;@method&#34; &#34;@path&#34; &#34;@authority&#34;);created=1660628866  
+</code></pre></div><ul>
+<li>拼接signatureBase并将签名加入请求headers</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#75715e">//与signature-input对应
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> signatureParams <span style="color:#f92672">=</span> Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">asList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;content-digest&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;x-ebay-signature-key&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;@method&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;@path&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;@authority&#34;</span><span style="color:#f92672">);</span> 
+   <span style="color:#75715e">//构造http message签名header
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">buildSignatureHeaders</span><span style="color:#f92672">(</span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> String<span style="color:#f92672">&gt;</span> headers<span style="color:#f92672">,</span> String url<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> SignatureException<span style="color:#f92672">,</span> IOException<span style="color:#f92672">,</span> CryptoException <span style="color:#f92672">{</span>
+        URI uri <span style="color:#f92672">=</span> URI<span style="color:#f92672">.</span><span style="color:#a6e22e">create</span><span style="color:#f92672">(</span>url<span style="color:#f92672">);</span>
+        StringBuilder buf <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuilder<span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>headers<span style="color:#f92672">.</span><span style="color:#a6e22e">containsKey</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;content-digest&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">//post请求没有body时，则不需要内容摘要content-digest
+</span><span style="color:#75715e"></span>            signatureParams <span style="color:#f92672">=</span> signatureParams<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>a <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">!</span>a<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;content-digest&#34;</span><span style="color:#f92672">)).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String header <span style="color:#f92672">:</span> signatureParams<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\&#34;&#34;</span><span style="color:#f92672">);</span>
+            buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>header<span style="color:#f92672">.</span><span style="color:#a6e22e">toLowerCase</span><span style="color:#f92672">());</span>
+            buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\&#34;: &#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>header<span style="color:#f92672">.</span><span style="color:#a6e22e">startsWith</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;@&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">switch</span> <span style="color:#f92672">(</span>header<span style="color:#f92672">.</span><span style="color:#a6e22e">toLowerCase</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+                    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;@method&#34;</span><span style="color:#f92672">:</span>
+                        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;POST&#34;</span><span style="color:#f92672">);</span>
+                        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;@authority&#34;</span><span style="color:#f92672">:</span>
+                        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>uri<span style="color:#f92672">.</span><span style="color:#a6e22e">getAuthority</span><span style="color:#f92672">());</span>
+                        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;@target-uri&#34;</span><span style="color:#f92672">:</span>
+                        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>url<span style="color:#f92672">);</span>
+                        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;@scheme&#34;</span><span style="color:#f92672">:</span>
+                        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>uri<span style="color:#f92672">.</span><span style="color:#a6e22e">getScheme</span><span style="color:#f92672">());</span>
+                        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;@path&#34;</span><span style="color:#f92672">:</span>
+                        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>uri<span style="color:#f92672">.</span><span style="color:#a6e22e">getPath</span><span style="color:#f92672">());</span>
+                        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;@query&#34;</span><span style="color:#f92672">:</span>
+                        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>uri<span style="color:#f92672">.</span><span style="color:#a6e22e">getQuery</span><span style="color:#f92672">());</span>
+                        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+                        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> SignatureException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Unknown pseudo header &#34;</span> <span style="color:#f92672">+</span> header<span style="color:#f92672">);</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>headers<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>header<span style="color:#f92672">));</span>
+            <span style="color:#f92672">}</span>
+            buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\n&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+
+        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\&#34;@signature-params\&#34;: &#34;</span><span style="color:#f92672">);</span>
+        StringBuilder signatureInputBuf <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> StringBuilder<span style="color:#f92672">();</span>
+        signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;(&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> signatureParams<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">();</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            String param <span style="color:#f92672">=</span> signatureParams<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+            signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\&#34;&#34;</span><span style="color:#f92672">);</span>
+            signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>param<span style="color:#f92672">);</span>
+            signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;\&#34;&#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;</span> signatureParams<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">()</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">);</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;);created=&#34;</span><span style="color:#f92672">);</span>
+        signatureInputBuf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>Instant<span style="color:#f92672">.</span><span style="color:#a6e22e">now</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getEpochSecond</span><span style="color:#f92672">());</span>
+        buf<span style="color:#f92672">.</span><span style="color:#a6e22e">append</span><span style="color:#f92672">(</span>signatureInputBuf<span style="color:#f92672">);</span>
+        String signatureInput <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;sig1=&#34;</span> <span style="color:#f92672">+</span> signatureInputBuf<span style="color:#f92672">;</span>
+        String signatureBase <span style="color:#f92672">=</span> buf<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+        headers<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;signature&#34;</span><span style="color:#f92672">,</span> getSignature<span style="color:#f92672">(</span>signatureBase<span style="color:#f92672">));</span>
+        headers<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;signature-input&#34;</span><span style="color:#f92672">,</span> signatureInput<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="计算content-digest">计算Content-Digest</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 获得body的内容摘要
+</span><span style="color:#75715e">     *
+</span><span style="color:#75715e">     * @param content
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> String <span style="color:#a6e22e">getContentDigest</span><span style="color:#f92672">(</span>String content<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> hash <span style="color:#f92672">=</span> org<span style="color:#f92672">.</span><span style="color:#a6e22e">apache</span><span style="color:#f92672">.</span><span style="color:#a6e22e">commons</span><span style="color:#f92672">.</span><span style="color:#a6e22e">codec</span><span style="color:#f92672">.</span><span style="color:#a6e22e">digest</span><span style="color:#f92672">.</span><span style="color:#a6e22e">DigestUtils</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sha256</span><span style="color:#f92672">(</span>content<span style="color:#f92672">);</span>
+        String encoded <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getEncoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">encodeToString</span><span style="color:#f92672">(</span>hash<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;sha-256=:&#34;</span> <span style="color:#f92672">+</span> encoded <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="读取密钥对文件">读取密钥对文件</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">private</span> PrivateKey privateKey<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> PublicKey publicKey<span style="color:#f92672">;</span>
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">readPublicKey</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> SignatureException <span style="color:#f92672">{</span>
+        Path path <span style="color:#f92672">=</span> Paths<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;xxxx\\rsa\\publickey.pem&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>FileReader keyReader <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileReader<span style="color:#f92672">(</span>path<span style="color:#f92672">.</span><span style="color:#a6e22e">toFile</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+            PEMParser pemParser <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PEMParser<span style="color:#f92672">(</span>keyReader<span style="color:#f92672">);</span>
+            JcaPEMKeyConverter converter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JcaPEMKeyConverter<span style="color:#f92672">();</span>
+            SubjectPublicKeyInfo publicKeyInfo <span style="color:#f92672">=</span> SubjectPublicKeyInfo<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>pemParser<span style="color:#f92672">.</span><span style="color:#a6e22e">readObject</span><span style="color:#f92672">());</span>
+            <span style="color:#75715e">//方法要调用核心类库的keyFactory，java-8不支持ed25519算法，无法根据对应的ed25519公钥文件构造对象
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">publicKey</span> <span style="color:#f92672">=</span> converter<span style="color:#f92672">.</span><span style="color:#a6e22e">getPublicKey</span><span style="color:#f92672">(</span>publicKeyInfo<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> SignatureException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Error loading public key: &#34;</span> <span style="color:#f92672">+</span> ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">(),</span> ex<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">readPrivateKey</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> SignatureException <span style="color:#f92672">{</span>
+        Path path <span style="color:#f92672">=</span> Paths<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;xxxx\\rsa\\privatekey.pem&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>FileReader keyReader <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileReader<span style="color:#f92672">(</span>path<span style="color:#f92672">.</span><span style="color:#a6e22e">toFile</span><span style="color:#f92672">()))</span> <span style="color:#f92672">{</span>
+            PEMParser pemParser <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> PEMParser<span style="color:#f92672">(</span>keyReader<span style="color:#f92672">);</span>
+            JcaPEMKeyConverter converter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JcaPEMKeyConverter<span style="color:#f92672">();</span>
+            PrivateKeyInfo privateKeyInfo <span style="color:#f92672">=</span> PrivateKeyInfo<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">(</span>pemParser<span style="color:#f92672">.</span><span style="color:#a6e22e">readObject</span><span style="color:#f92672">());</span>
+            <span style="color:#75715e">//方法要调用核心类库的keyFactory，java-8不支持ed25519算法，无法根据对应的ed25519私钥文件构造对象
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">privateKey</span> <span style="color:#f92672">=</span> converter<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrivateKey</span><span style="color:#f92672">(</span>privateKeyInfo<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IOException ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> SignatureException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Error loading private key: &#34;</span> <span style="color:#f92672">+</span> ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">(),</span> ex<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="使用私钥为signature-base签名">使用私钥为signature-base签名</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">    public String getSignature(String baseString) throws CryptoException, IOException {
+        byte[] base = baseString.getBytes(StandardCharsets.UTF_8);
+        Signer signer;
+        //如果要使用ed25519密钥签名使用signer = new Ed25519Signer(new SHA256Digest()) 
+        signer = new RSADigestSigner(new SHA256Digest());
+        AsymmetricKeyParameter privateKeyParameters = PrivateKeyFactory.createKey(this.privateKey.getEncoded());
+        signer.init(true, privateKeyParameters);
+        signer.update(base, 0, base.length);
+        byte[] signature = signer.generateSignature();
+        return &#34;sig1=:&#34; + new String(org.bouncycastle.util.encoders.Base64.encode(signature)) + &#34;:&#34;;
+    }
+</code></pre></div><h1 id="将公钥转为jwe格式的字符串">将公钥转为JWE格式的字符串</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#75715e">//把公钥文件转为JWE格式字符串
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getJWE</span><span style="color:#f92672">(</span>PublicKey publicKey<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">//masterkey.key文件 ebay提供
+</span><span style="color:#75715e"></span>            Path masterkeyPath <span style="color:#f92672">=</span> Paths<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;xxx\\masterkey.key&#34;</span><span style="color:#f92672">);</span>
+            String secretKeyBase64 <span style="color:#f92672">=</span> Files<span style="color:#f92672">.</span><span style="color:#a6e22e">readAllLines</span><span style="color:#f92672">(</span>masterkeyPath<span style="color:#f92672">).</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>0<span style="color:#f92672">);</span><span style="color:#75715e">//目前文件只有一行
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> secretKey <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getDecoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">decode</span><span style="color:#f92672">(</span>secretKeyBase64<span style="color:#f92672">);</span>
+
+            JWEEncrypter jweEncrypter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AESEncrypter<span style="color:#f92672">(</span>secretKey<span style="color:#f92672">);</span>
+            JWEDecrypter jweDecrypter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AESDecrypter<span style="color:#f92672">(</span>secretKey<span style="color:#f92672">);</span>
+            <span style="color:#75715e">// Compose the JWT claims set
+</span><span style="color:#75715e"></span>            Date now <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Date<span style="color:#f92672">();</span>
+
+            JWTClaimsSet jwtClaims <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JWTClaimsSet<span style="color:#f92672">.</span><span style="color:#a6e22e">Builder</span><span style="color:#f92672">()</span>
+                    <span style="color:#f92672">.</span><span style="color:#a6e22e">expirationTime</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Date<span style="color:#f92672">(</span>now<span style="color:#f92672">.</span><span style="color:#a6e22e">getTime</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> 1000L <span style="color:#f92672">*</span> 60 <span style="color:#f92672">*</span> 60 <span style="color:#f92672">*</span> 24 <span style="color:#f92672">*</span> 365 <span style="color:#f92672">*</span> 10<span style="color:#f92672">))</span> <span style="color:#75715e">// expires in 3 years
+</span><span style="color:#75715e"></span>                    <span style="color:#f92672">.</span><span style="color:#a6e22e">notBeforeTime</span><span style="color:#f92672">(</span>now<span style="color:#f92672">)</span>
+                    <span style="color:#f92672">.</span><span style="color:#a6e22e">issueTime</span><span style="color:#f92672">(</span>now<span style="color:#f92672">)</span>
+                    <span style="color:#f92672">.</span><span style="color:#a6e22e">jwtID</span><span style="color:#f92672">(</span>UUID<span style="color:#f92672">.</span><span style="color:#a6e22e">randomUUID</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">())</span>
+                    <span style="color:#f92672">.</span><span style="color:#a6e22e">claim</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;appid&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;app1&#34;</span><span style="color:#f92672">)</span> <span style="color:#75715e">// this is set to the appId
+</span><span style="color:#75715e"></span>                    <span style="color:#f92672">.</span><span style="color:#a6e22e">claim</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;pkey&#34;</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">(</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">bouncycastle</span><span style="color:#f92672">.</span><span style="color:#a6e22e">util</span><span style="color:#f92672">.</span><span style="color:#a6e22e">encoders</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Base64</span><span style="color:#f92672">.</span><span style="color:#a6e22e">encode</span><span style="color:#f92672">(</span>publicKey<span style="color:#f92672">.</span><span style="color:#a6e22e">getEncoded</span><span style="color:#f92672">())))</span> <span style="color:#75715e">// public ed25519 key
+</span><span style="color:#75715e"></span>                    <span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+
+
+            <span style="color:#75715e">// Request JWT encrypted with DIR and 256-bit AES/GCM
+</span><span style="color:#75715e"></span>            JWEHeader header <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JWEHeader<span style="color:#f92672">.</span><span style="color:#a6e22e">Builder</span><span style="color:#f92672">(</span>JWEAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">A256GCMKW</span><span style="color:#f92672">,</span> EncryptionMethod<span style="color:#f92672">.</span><span style="color:#a6e22e">A256GCM</span><span style="color:#f92672">)</span>
+                    <span style="color:#f92672">.</span><span style="color:#a6e22e">compressionAlgorithm</span><span style="color:#f92672">(</span>CompressionAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">DEF</span><span style="color:#f92672">)</span>
+                    <span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+
+
+            <span style="color:#75715e">// Create the encrypted JWT object
+</span><span style="color:#75715e"></span>            EncryptedJWT jwt <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> EncryptedJWT<span style="color:#f92672">(</span>header<span style="color:#f92672">,</span> jwtClaims<span style="color:#f92672">);</span>
+
+            <span style="color:#75715e">// Do the actual encryption
+</span><span style="color:#75715e"></span>            jwt<span style="color:#f92672">.</span><span style="color:#a6e22e">encrypt</span><span style="color:#f92672">(</span>jweEncrypter<span style="color:#f92672">);</span>
+
+            <span style="color:#75715e">// Serialise to JWT compact form
+</span><span style="color:#75715e"></span>            String jwtString <span style="color:#f92672">=</span> jwt<span style="color:#f92672">.</span><span style="color:#a6e22e">serialize</span><span style="color:#f92672">();</span>
+
+            <span style="color:#66d9ef">return</span> jwtString<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>JOSEException ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> SignatureException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Error creating JWE: &#34;</span> <span style="color:#f92672">+</span> ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">(),</span> ex<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;异常&#34;</span><span style="color:#f92672">,</span> ex<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+
+    <span style="color:#f92672">}</span>
+</code></pre></div>
+		</section>
+
+		<div class="post-tags">
+			
+			
+			
+		</div>
+	</article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2022  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+</div>
+    </body>
+</html>
