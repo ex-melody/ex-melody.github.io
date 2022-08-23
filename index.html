@@ -50,7 +50,7 @@
 				
 				<section class="list-item">
 					<h1 class="title"><a href="/2022-08/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/">ebayAPI请求新增的签名机制处理流程，java</a></h1>
-					<time>Aug 18, 2022 <span class="draft-label">DRAFT</span> </time>
+					<time>Aug 18, 2022</time>
 					<br><div class="description">
 						
 						部分站点因为新的安全政策，API请求需要额外新增四个header  x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
