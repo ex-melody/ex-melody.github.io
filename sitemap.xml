@@ -3,10 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://ex-melody.github.io/anime/</loc>
-    <lastmod>2022-08-23T14:30:07+00:00</lastmod>
+    <lastmod>2022-08-23T14:50:58+00:00</lastmod>
   </url><url>
     <loc>https://ex-melody.github.io/</loc>
-    <lastmod>2022-08-23T14:30:07+00:00</lastmod>
+    <lastmod>2022-08-23T14:50:58+00:00</lastmod>
+  </url><url>
+    <loc>https://ex-melody.github.io/anime/test/</loc>
+    <lastmod>2022-08-23T14:50:58+00:00</lastmod>
   </url><url>
     <loc>https://ex-melody.github.io/anime/guanyinghui/</loc>
     <lastmod>2022-08-23T14:30:07+00:00</lastmod>
@@ -19,6 +22,8 @@
   </url><url>
     <loc>https://ex-melody.github.io/about/</loc>
     <lastmod>2022-08-18T04:09:20+00:00</lastmod>
+  </url><url>
+    <loc>https://ex-melody.github.io/anime/test22/</loc>
   </url><url>
     <loc>https://ex-melody.github.io/readme/</loc>
     <priority>0</priority>
