@@ -24,5 +24,14 @@ URI uri = URI.create(url); String method = uri.getMethod();
   signature-Input:sig1=(&amp;#34;content-digest&amp;#34; &amp;#34;x-ebay-signature-key&amp;#34; &amp;#34;@method&amp;#34; &amp;#34;@path&amp;#34; &amp;#34;@authority&amp;#34;);created=1658272908   created后面附加的是时间戳。</description>
     </item>
     
+    <item>
+      <title>类目同步是否支持多属性</title>
+      <link>https://ex-melody.github.io/work/%E6%9B%B4%E6%96%B0%E7%B1%BB%E7%9B%AE%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B1%9E%E6%80%A7/</link>
+      <pubDate>Thu, 18 Aug 2022 05:49:55 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/work/%E6%9B%B4%E6%96%B0%E7%B1%BB%E7%9B%AE%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B1%9E%E6%80%A7/</guid>
+      <description>类目同步是否支持多属性  接口只返回与父类目不一致的类目，以及站点的默认配置 调用接口获取所有与父类目不一致的类目id 查询类目表，获取这批类目的所属层级 将接口返回的类目id按层级分组，并从类目树最底层的类目开始向上遍历层级 遍历到的当前层级，本层类目按true和false分组，每一组更新他们所有还未标记是否支持多属性的子类目 将所有剩下未标记是否支持多属性的类目更新为站点默认配置  </description>
+    </item>
+    
   </channel>
 </rss>
