@@ -44,6 +44,20 @@ URI uri = URI.create(url); String method = uri.getMethod();
     
     <item>
       <title></title>
+      <link>https://ex-melody.github.io/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/</guid>
+      <description>本文只讨论水平分表，垂直分表属于业务重构问题
+ 为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
+为什么效率高：
+ 减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
+ 分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
+ 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2.</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://ex-melody.github.io/readme/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
