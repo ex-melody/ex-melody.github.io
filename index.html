@@ -57,7 +57,15 @@
 					<time>Aug 18, 2022</time>
 					<br><div class="description">
 						
-						&hellip;
+						部分站点因为新的安全政策，API请求需要额外新增四个header  x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
+  将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。
+  为api请求的body内容计算摘要content-digest，作为请求header Content-Digest
+  ebay已经指定 header signature-Input 为sig1=(&ldquo;content-digest&rdquo; &ldquo;x-ebay-signature-key&rdquo; &ldquo;@method&rdquo; &ldquo;@path&rdquo; &ldquo;@authority&rdquo;);created=1658272908代表要根据content-digest，x-ebay-signature-key两个请求头的内容和http请求的&quot;@method&quot; &ldquo;@path&rdquo; &ldquo;@authority&quot;属性拼接signatureBase。 可直接通过URI对象获取这些@开头的属性。
+URI uri = URI.create(url); String method = uri.getMethod();
+  使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
+  拼接signature base的格式要求   详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
+  signature base每一行都是&quot;key&rdquo;: value\n的形式，key用&quot;&ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
+  signature-Input:sig1=(&#34;content-digest&#34; &#34;x-ebay-signature-key&#34; &#34;@method&#34; &#34;@path&#34; &#34;@authority&#34;);created=1658272908   created后面附加的是时间戳。&hellip;
 						
 					</div>
 					<a class="readmore" href="/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/">Read more ⟶</a>
