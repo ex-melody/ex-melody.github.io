@@ -2,12 +2,20 @@
 <html><head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>MySQL事务不支持Truncate操作回滚 - Melody FOR Autumn</title><meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。
-只要表格没有外键的话用以下操作代替truncate 创建一个和原表结构一样的新表，将原表改名为备份表 CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable &hellip; ; 如果插入成功，删除作为备份的原表 DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复 RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop;" />
+	<meta name="description" content="需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法清空id，MySQl又不支持对truncate使用事务。
+只要表格没有外键的话用以下操作代替truncate
+创建一个和原表结构一样的新表，将原表改名为备份表
+CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable ... ; 如果插入成功，删除作为备份的原表
+DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复
+RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; " />
 	<meta property="og:image" content=""/>
 	<meta property="og:title" content="MySQL事务不支持Truncate操作回滚" />
-<meta property="og:description" content="需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。
-只要表格没有外键的话用以下操作代替truncate 创建一个和原表结构一样的新表，将原表改名为备份表 CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable &hellip; ; 如果插入成功，删除作为备份的原表 DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复 RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop;" />
+<meta property="og:description" content="需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法清空id，MySQl又不支持对truncate使用事务。
+只要表格没有外键的话用以下操作代替truncate
+创建一个和原表结构一样的新表，将原表改名为备份表
+CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable ... ; 如果插入成功，删除作为备份的原表
+DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复
+RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; " />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://ex-melody.github.io/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/" /><meta property="article:section" content="work" />
 <meta property="article:published_time" content="2022-09-10T05:49:55+00:00" />
@@ -15,8 +23,12 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="MySQL事务不支持Truncate操作回滚"/>
-<meta name="twitter:description" content="需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。
-只要表格没有外键的话用以下操作代替truncate 创建一个和原表结构一样的新表，将原表改名为备份表 CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable &hellip; ; 如果插入成功，删除作为备份的原表 DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复 RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop;"/>
+<meta name="twitter:description" content="需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法清空id，MySQl又不支持对truncate使用事务。
+只要表格没有外键的话用以下操作代替truncate
+创建一个和原表结构一样的新表，将原表改名为备份表
+CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable ... ; 如果插入成功，删除作为备份的原表
+DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复
+RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; "/>
 
 	
         <link href="https://ex-melody.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
@@ -55,18 +67,18 @@
 		
 
 		<section class="body">
-			<p>需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。</p>
-<p>只要表格没有外键的话用以下操作代替truncate
-创建一个和原表结构一样的新表，将原表改名为备份表
-CREATE TABLE mytable_new LIKE mytable;
+			<p>需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法清空id，MySQl又不支持对truncate使用事务。</p>
+<p>只要表格没有外键的话用以下操作代替truncate</p>
+<p>创建一个和原表结构一样的新表，将原表改名为备份表</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">CREATE TABLE mytable_new LIKE mytable; 
 RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable;
-INSERT INTO mytable &hellip; ;
-如果插入成功，删除作为备份的原表
-DROP TABLE mytable_backup;
-如果插入失败，将新表删除，将原表恢复
-RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable;
-DROP TABLE mytable_drop;</p>
-
+INSERT INTO mytable ... ;
+</code></pre></div><p>如果插入成功，删除作为备份的原表</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">DROP TABLE mytable_backup;
+</code></pre></div><p>如果插入失败，将新表删除，将原表恢复</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable;
+DROP TABLE mytable_drop;
+</code></pre></div>
 		</section>
 
 		<div class="post-tags">
