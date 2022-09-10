@@ -6,7 +6,17 @@
     <description>Recent content on Melody FOR Autumn</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 23 Aug 2022 14:30:07 +0000</lastBuildDate><atom:link href="https://ex-melody.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 10 Sep 2022 05:49:55 +0000</lastBuildDate><atom:link href="https://ex-melody.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL事务不支持Truncate操作回滚</title>
+      <link>https://ex-melody.github.io/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/</link>
+      <pubDate>Sat, 10 Sep 2022 05:49:55 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/</guid>
+      <description>需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。
+只要表格没有外键的话用以下操作代替truncate 创建一个和原表结构一样的新表，将原表改名为备份表 CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable &amp;hellip; ; 如果插入成功，删除作为备份的原表 DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复 RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop;</description>
+    </item>
+    
     <item>
       <title>观影会</title>
       <link>https://ex-melody.github.io/anime/guanyinghui/</link>

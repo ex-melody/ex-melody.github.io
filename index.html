@@ -53,6 +53,18 @@
 				
 				
 				<section class="list-item">
+					<h1 class="title"><a href="/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/">MySQL事务不支持Truncate操作回滚</a></h1>
+					<time>Sep 10, 2022</time>
+					<br><div class="description">
+						
+						需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。
+只要表格没有外键的话用以下操作代替truncate 创建一个和原表结构一样的新表，将原表改名为备份表 CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable &hellip; ; 如果插入成功，删除作为备份的原表 DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复 RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop;&hellip;
+						
+					</div>
+					<a class="readmore" href="/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/">Read more ⟶</a>
+				</section>
+				
+				<section class="list-item">
 					<h1 class="title"><a href="/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/">ebayAPI请求新增的签名机制处理流程，java</a></h1>
 					<time>Aug 18, 2022</time>
 					<br><div class="description">
