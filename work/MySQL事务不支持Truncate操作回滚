@@ -1,0 +1,18 @@
+
+---
+title: "MySQL事务不支持Truncate操作回滚"
+date: 2022-09-10T05:49:55Z
+draft: false
+---
+需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法情况id，MySQl又不支持对truncate使用事务。
+
+只要表格没有外键的话用以下操作代替truncate
+创建一个和原表结构一样的新表，将原表改名为备份表
+CREATE TABLE mytable_new LIKE mytable; 
+RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable;
+INSERT INTO mytable ... ;
+如果插入成功，删除作为备份的原表
+DROP TABLE mytable_backup;
+如果插入失败，将新表删除，将原表恢复
+RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable;
+DROP TABLE mytable_drop;
