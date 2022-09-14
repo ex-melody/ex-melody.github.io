@@ -22,15 +22,6 @@ RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytab
     </item>
     
     <item>
-      <title>观影会</title>
-      <link>https://ex-melody.github.io/anime/guanyinghui/</link>
-      <pubDate>Tue, 23 Aug 2022 14:30:07 +0000</pubDate>
-      
-      <guid>https://ex-melody.github.io/anime/guanyinghui/</guid>
-      <description>加叔昨天给了我一个观影会的名额，7点的观影会，今天特意请了一小时的假提前下班。没出办公室就已经是大暴雨了，到了地铁站鞋子早就湿透了。商场就在地铁口，或者说地铁口就在商场里面也行。这么方便的商场，其实不提前下班也完全来得及赶上电影。出地铁就先确认了眼影院位置，之后到楼下吃肯德基。吃完到影院发现也是加叔在签到台给人签到。一堆电影票平铺在桌子上，加叔不停的给来人推荐前中后排的位置，当然越往后越没什么好位置可推荐。 至于雀斑公主这片子嘛，没啥好评价的，</description>
-    </item>
-    
-    <item>
       <title>ebayAPI请求新增的签名机制处理流程，java</title>
       <link>https://ex-melody.github.io/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/</link>
       <pubDate>Thu, 18 Aug 2022 05:49:55 +0000</pubDate>
@@ -86,6 +77,15 @@ URI uri = URI.create(url); String method = uri.getMethod();
       
       <guid>https://ex-melody.github.io/about/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title>InterruptedException异常处理</title>
+      <link>https://ex-melody.github.io/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</guid>
+      <description>前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式  对外抛出不做额外封装的InterruptedException，由上层方法决定，是否中断。 不能抛出异常的情况下，需要将中断标志位更新为true，保留方法响应外界中断通知的能力。线程内部可自定义代码根据中断标志位的状态决定是否结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&amp;#34;interrupt status is &amp;#34; + Thread.currentThread().isInterrupted() +&amp;#34; and Thread still alive&amp;#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&amp;#34;interrupt status now is true&amp;#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&amp;#34;after throw exception,interrupt status now is false&amp;#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&amp;#34;set interrupt status as True&amp;#34;); if (!</description>
     </item>
     
   </channel>

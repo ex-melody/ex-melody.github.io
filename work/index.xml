@@ -47,5 +47,14 @@ URI uri = URI.create(url); String method = uri.getMethod();
       <description>类目同步是否支持多属性  接口只返回与父类目不一致的类目，以及站点的默认配置 调用接口获取所有与父类目不一致的类目id 查询类目表，获取这批类目的所属层级 将接口返回的类目id按层级分组，并从类目树最底层的类目开始向上遍历层级 遍历到的当前层级，本层类目按true和false分组，每一组更新他们所有还未标记是否支持多属性的子类目 将所有剩下未标记是否支持多属性的类目更新为站点默认配置  </description>
     </item>
     
+    <item>
+      <title>InterruptedException异常处理</title>
+      <link>https://ex-melody.github.io/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ex-melody.github.io/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</guid>
+      <description>前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式  对外抛出不做额外封装的InterruptedException，由上层方法决定，是否中断。 不能抛出异常的情况下，需要将中断标志位更新为true，保留方法响应外界中断通知的能力。线程内部可自定义代码根据中断标志位的状态决定是否结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&amp;#34;interrupt status is &amp;#34; + Thread.currentThread().isInterrupted() +&amp;#34; and Thread still alive&amp;#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&amp;#34;interrupt status now is true&amp;#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&amp;#34;after throw exception,interrupt status now is false&amp;#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&amp;#34;set interrupt status as True&amp;#34;); if (!</description>
+    </item>
+    
   </channel>
 </rss>
