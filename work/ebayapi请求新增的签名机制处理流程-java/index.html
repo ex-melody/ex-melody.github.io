@@ -254,13 +254,11 @@ ebay指定了请求header signature-Input为</p>
     }
 </code></pre></div><h1 id="将公钥转为jwe格式的字符串">将公钥转为JWE格式的字符串</h1>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#75715e">//把公钥文件转为JWE格式字符串
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getJWE</span><span style="color:#f92672">(</span>PublicKey publicKey<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
-        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getJWE</span><span style="color:#f92672">(</span>PublicKey publicKey<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> JOSEException <span style="color:#f92672">,</span> IOException <span style="color:#f92672">{</span>
             <span style="color:#75715e">//masterkey.key文件 ebay提供
 </span><span style="color:#75715e"></span>            Path masterkeyPath <span style="color:#f92672">=</span> Paths<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;xxx\\masterkey.key&#34;</span><span style="color:#f92672">);</span>
             String secretKeyBase64 <span style="color:#f92672">=</span> Files<span style="color:#f92672">.</span><span style="color:#a6e22e">readAllLines</span><span style="color:#f92672">(</span>masterkeyPath<span style="color:#f92672">).</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>0<span style="color:#f92672">);</span><span style="color:#75715e">//目前文件只有一行
 </span><span style="color:#75715e"></span>            <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> secretKey <span style="color:#f92672">=</span> Base64<span style="color:#f92672">.</span><span style="color:#a6e22e">getDecoder</span><span style="color:#f92672">().</span><span style="color:#a6e22e">decode</span><span style="color:#f92672">(</span>secretKeyBase64<span style="color:#f92672">);</span>
-
             JWEEncrypter jweEncrypter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AESEncrypter<span style="color:#f92672">(</span>secretKey<span style="color:#f92672">);</span>
             JWEDecrypter jweDecrypter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AESDecrypter<span style="color:#f92672">(</span>secretKey<span style="color:#f92672">);</span>
             <span style="color:#75715e">// Compose the JWT claims set
@@ -292,12 +290,6 @@ ebay指定了请求header signature-Input为</p>
 </span><span style="color:#75715e"></span>            String jwtString <span style="color:#f92672">=</span> jwt<span style="color:#f92672">.</span><span style="color:#a6e22e">serialize</span><span style="color:#f92672">();</span>
 
             <span style="color:#66d9ef">return</span> jwtString<span style="color:#f92672">;</span>
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>JOSEException ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> SignatureException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Error creating JWE: &#34;</span> <span style="color:#f92672">+</span> ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">(),</span> ex<span style="color:#f92672">);</span>
-        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
-            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Exception<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;异常&#34;</span><span style="color:#f92672">,</span> ex<span style="color:#f92672">);</span>
-        <span style="color:#f92672">}</span>
-
     <span style="color:#f92672">}</span>
 </code></pre></div>
 		</section>

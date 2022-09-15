@@ -55,12 +55,10 @@
 					<time>Sep 10, 2022</time>
 					<br><div class="description">
 						
-						需要先truncate表格再插入数据的情况，虽然delete可以用事务回滚但无法清空id，MySQl又不支持对truncate使用事务。
-只要表格没有外键的话用以下操作代替truncate
-创建一个和原表结构一样的新表，将原表改名为备份表
-CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; INSERT INTO mytable ... ; 如果插入成功，删除作为备份的原表
-DROP TABLE mytable_backup; 如果插入失败，将新表删除，将原表恢复
-RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; &hellip;
+						数据库某张表不断使用delete清理历史数据又插入新数据的话，数据库的主键id会不断增长，最后影响查询效率，所以偶尔需要truncate表格清空id后再插入新的数据。但MySQl的事务虽然支持delete却不支持truncate,drop等操作。
+因此，只要表格没有外键的话可以用以下操作代替truncate操作
+ 创建一个和原表mytable结构一样的新表mytable_new，将原表改名为备份表mytable_backup，再将新表改名为原表的名字mytable。
+使用RENAME命令同时对两张表改名是一个原子操作，可以确保数据库中任何时间都存在一张名叫mytable的表格。  CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; 一些业务逻辑代码向当前的mytable插入数据，失败就抛出异常  如果插入成功，删除作为备份的原表  DROP TABLE mytable_backup;  如果发现异常，将新表删除，将原表恢复  RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; &hellip;
 						
 					</div>
 					<a class="readmore" href="/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/">Read more ⟶</a>
@@ -101,7 +99,7 @@ URI uri = URI.create(url); String method = uri.getMethod();
 					<time>Jan 1, 0001</time>
 					<br><div class="description">
 						
-						前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式  对外抛出不做额外封装的InterruptedException，由上层方法决定，是否中断。 不能抛出异常的情况下，需要将中断标志位更新为true，保留方法响应外界中断通知的能力。线程内部可自定义代码根据中断标志位的状态决定是否结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; + Thread.currentThread().isInterrupted() +&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!&hellip;
+						前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式  对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常。 不能抛出异常的情况下，需要将中断标志位更新为true，保留方法响应外界中断通知的能力。线程内部可自定义代码根据中断标志位的状态决定是否结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; + Thread.currentThread().isInterrupted() +&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!&hellip;
 						
 					</div>
 					<a class="readmore" href="/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/">Read more ⟶</a>
