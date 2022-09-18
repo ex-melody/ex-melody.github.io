@@ -55,7 +55,10 @@
 					<time>Sep 10, 2022</time>
 					<br><div class="description">
 						
-						&hellip;
+						数据库某张表不断使用delete清理历史数据又插入新数据的话，数据库的主键id会不断增长，最后影响查询效率，所以偶尔需要truncate表格清空id后再插入新的数据。但MySQl的事务虽然支持delete却不支持truncate,drop等操作。
+因此，只要表格没有外键的话可以用以下操作代替truncate操作
+ 创建一个和原表mytable结构一样的新表mytable_new，将原表改名为备份表mytable_backup，再将新表改名为原表的名字mytable。
+使用RENAME命令同时对两张表改名是一个原子操作，可以确保数据库中任何时间都存在一张名叫mytable的表格。  CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; 一些业务逻辑代码向当前的mytable插入数据，失败就抛出异常  如果插入成功，删除作为备份的原表  DROP TABLE mytable_backup;  如果发现异常，将新表删除，将原表恢复  RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; &hellip;
 						
 					</div>
 					<a class="readmore" href="/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/">Read more ⟶</a>
