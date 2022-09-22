@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Coworker_pris on Melody FOR Autumn</title>
-    <link>http://ex-melody.me/coworker_pri/</link>
+    <link>/coworker_pri/</link>
     <description>Recent content in Coworker_pris on Melody FOR Autumn</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>zh-CN</language><atom:link href="http://ex-melody.me/coworker_pri/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-CN</language><atom:link href="/coworker_pri/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title></title>
-      <link>http://ex-melody.me/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/</link>
+      <link>/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>http://ex-melody.me/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/</guid>
+      <guid>/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/</guid>
       <description>本文只讨论水平分表，垂直分表属于业务重构问题
  为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
 为什么效率高：
