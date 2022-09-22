@@ -13,7 +13,7 @@
  创建一个和原表mytable结构一样的新表mytable_new，将原表改名为备份表mytable_backup，再将新表改名为原表的名字mytable。
 使用RENAME命令同时对两张表改名是一个原子操作，可以确保数据库中任何时间都存在一张名叫mytable的表格。  CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; 一些业务逻辑代码向当前的mytable插入数据，失败就抛出异常  如果插入成功，删除作为备份的原表  DROP TABLE mytable_backup;  如果发现异常，将新表删除，将原表恢复  RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://ex-melody.github.io/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/" /><meta property="article:section" content="work" />
+<meta property="og:url" content="http://ex-melody.me/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E6%93%8D%E4%BD%9C%E5%9B%9E%E6%BB%9A/" /><meta property="article:section" content="work" />
 <meta property="article:published_time" content="2022-09-10T05:49:55+00:00" />
 <meta property="article:modified_time" content="2022-09-10T05:49:55+00:00" />
 
@@ -25,12 +25,12 @@
 使用RENAME命令同时对两张表改名是一个原子操作，可以确保数据库中任何时间都存在一张名叫mytable的表格。  CREATE TABLE mytable_new LIKE mytable; RENAME TABLE mytable TO mytable_backup,mytable_new TO mytable; 一些业务逻辑代码向当前的mytable插入数据，失败就抛出异常  如果插入成功，删除作为备份的原表  DROP TABLE mytable_backup;  如果发现异常，将新表删除，将原表恢复  RENAME TABLE mytable TO mytable_drop,mytable_backup TO mytable; DROP TABLE mytable_drop; "/>
 
 	
-        <link href="https://ex-melody.github.io/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+        <link href="http://ex-melody.me/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://ex-melody.github.io/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://ex-melody.github.io/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css" media="(prefers-color-scheme: dark)"  />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://ex-melody.me/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://ex-melody.me/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css" media="(prefers-color-scheme: dark)"  />
 	
 	
 	
@@ -38,7 +38,7 @@
 <body>
         <div class="content"><header>
 	<div class="main">
-		<a href="https://ex-melody.github.io">Melody FOR Autumn</a>
+		<a href="http://ex-melody.me">Melody FOR Autumn</a>
 	</div>
 	<nav>
 		
