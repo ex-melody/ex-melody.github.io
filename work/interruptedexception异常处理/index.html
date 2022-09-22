@@ -9,7 +9,7 @@
 <meta property="og:description" content="前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
  对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; &#43; Thread.currentThread().isInterrupted() &#43;&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" /><meta property="article:section" content="work" />
+<meta property="og:url" content="http://ex-melody.me/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" /><meta property="article:section" content="work" />
 <meta property="article:published_time" content="2022-09-14T05:49:55+00:00" />
 <meta property="article:modified_time" content="2022-09-14T05:49:55+00:00" />
 
@@ -19,12 +19,12 @@
  对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; &#43; Thread.currentThread().isInterrupted() &#43;&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!"/>
 
 	
-        <link href="/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+        <link href="http://ex-melody.me/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
 	
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css" media="(prefers-color-scheme: dark)"  />
+	<link rel="stylesheet" type="text/css" media="screen" href="http://ex-melody.me/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="http://ex-melody.me/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css" media="(prefers-color-scheme: dark)"  />
 	
 	
 	
@@ -32,7 +32,7 @@
 <body>
         <div class="content"><header>
 	<div class="main">
-		<a href="/">Melody FOR Autumn</a>
+		<a href="http://ex-melody.me/">Melody FOR Autumn</a>
 	</div>
 	<nav>
 		
