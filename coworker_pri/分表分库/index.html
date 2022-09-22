@@ -1,15 +1,40 @@
 <!DOCTYPE html>
-<html><head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title> - Melody FOR Autumn</title><meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="本文只讨论水平分表，垂直分表属于业务重构问题
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>Melody FOR Autumn</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="本文只讨论水平分表，垂直分表属于业务重构问题
  为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
 为什么效率高：
  减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
  分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
- 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2." />
-	<meta property="og:image" content=""/>
-	<meta property="og:title" content="" />
+ 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2.">
+    <meta name="generator" content="Hugo 0.92.2" />
+    
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+
+    
+<link rel="stylesheet" href="/ananke/css/main.min.css" >
+
+
+
+    
+    
+    
+      
+
+    
+
+    
+    
+    <meta property="og:title" content="" />
 <meta property="og:description" content="本文只讨论水平分表，垂直分表属于业务重构问题
  为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
 为什么效率高：
@@ -17,11 +42,20 @@
  分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
  技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/" /><meta property="article:section" content="coworker_pri" />
+<meta property="og:url" content="http://ex-melody.me/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/" /><meta property="article:section" content="coworker_pri" />
 
 
 
-<meta name="twitter:card" content="summary"/>
+<meta itemprop="name" content="">
+<meta itemprop="description" content="本文只讨论水平分表，垂直分表属于业务重构问题
+ 为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
+为什么效率高：
+ 减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
+ 分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
+ 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2.">
+
+<meta itemprop="wordCount" content="505">
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
 <meta name="twitter:description" content="本文只讨论水平分表，垂直分表属于业务重构问题
  为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
@@ -31,41 +65,75 @@
  技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2."/>
 
 	
-        <link href="/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
-	
+  </head>
 
-	
-	<link rel="stylesheet" type="text/css" media="screen" href="/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css"   />
-	
-	
-	
-</head>
-<body>
-        <div class="content"><header>
-	<div class="main">
-		<a href="/">Melody FOR Autumn</a>
-	</div>
-	<nav>
-		
-		<a href="/work">work</a>
-		
-		<a href="/">Home</a>
-		
-		
-	</nav>
-</header>
+  <body class="ma0 avenir bg-near-white">
 
-<main>
-	<article>
-		<div class="title">
-			<h1 class="title"></h1>
-			<div class="meta">Posted on Jan 1, 0001</div>
-		</div>
-		
+    
+   
+  
 
-		<section class="body">
-			<blockquote>
+  <header>
+    <div class="bg-black">
+      <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l justify-between items-center center">
+    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
+      
+        Melody FOR Autumn
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+      
+<div class="ananke-socials">
+  
+</div>
+
+    </div>
+  </div>
+</nav>
+
+    </div>
+  </header>
+
+
+
+    <main class="pb7" role="main">
+      
+  
+  <article class="flex-l flex-wrap justify-between mw8 center ph3">
+    <header class="mt4 w-100">
+      <aside class="instapaper_ignoref b helvetica tracked">
+          
+        COWORKER_PRIS
+      </aside>
+      
+
+
+
+
+
+
+
+
+
+
+  <div id="sharing" class="mt3 ananke-socials">
+    
+  </div>
+
+
+      <h1 class="f1 athelas mt3 mb1"></h1>
+      
+      
+      
+
+      
+      
+    </header>
+    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><blockquote>
 <p>本文只讨论水平分表，垂直分表属于业务重构问题</p>
 </blockquote>
 <h1 id="为什么分表">为什么分表</h1>
@@ -239,9 +307,9 @@ complexInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="c
 complexInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
 </code></pre></div><h4 id="hashmodshardingalgorithm">HashModShardingAlgorithm</h4>
 <p>将t_order根据buyer_id(varchar 20) hash后分为四片，  key.hashCode()%4,</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">shardingAlgorithm = new HashModShardingAlgorithm();
-        shardingAlgorithm.getProps().setProperty(&#34;sharding-count&#34;, &#34;4&#34;);
-</code></pre></div><h4 id="hintinlineshardingalgorithm">HintInlineShardingAlgorithm</h4>
+<pre tabindex="0"><code>shardingAlgorithm = new HashModShardingAlgorithm();
+        shardingAlgorithm.getProps().setProperty(&quot;sharding-count&quot;, &quot;4&quot;);
+</code></pre><h4 id="hintinlineshardingalgorithm">HintInlineShardingAlgorithm</h4>
 <p>强制指定要查询的表，不根据SQL解析。例如下面代码查询表为t_order_0%4</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">hintInlineShardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HintInlineShardingAlgorithm<span style="color:#f92672">();</span>
 Properties props <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Properties<span style="color:#f92672">();</span>
@@ -304,8 +372,8 @@ shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e"
 </code></pre></div><h1 id="使用">使用</h1>
 <h2 id="项目配置">项目配置</h2>
 <p>application-dev.properties</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback"># 直接看项目配置
-</code></pre></div><p>TradeMybatisConfigurer.java 定义主数据源</p>
+<pre tabindex="0"><code># 直接看项目配置
+</code></pre><p>TradeMybatisConfigurer.java 定义主数据源</p>
 <h2 id="动态数据源切换">动态数据源切换</h2>
 <p>将分表数据源定义为主数据源，对于某些SQL，ShardingJDBC不支持，这种情况需要我们手动切换为普通数据源（druid）</p>
 <p>使用Spring提供的AbstractRoutingDataSource实现数据源切换</p>
@@ -492,8 +560,8 @@ shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e"
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t_parent <span style="color:#66d9ef">as</span> p <span style="color:#66d9ef">inner</span> <span style="color:#66d9ef">join</span> t_detail <span style="color:#66d9ef">as</span> d <span style="color:#66d9ef">on</span> d.p_id<span style="color:#f92672">=</span>p.id
 </code></pre></div><p>如果父子表都有分表，会关联t_parent0-9 * t_detail0_9 执行100条sql语句</p>
 <p>解决方案是绑定父子表分片，这样t_parent_0至于t_detail_0 连接查询，执行10条sql语句</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">spring.shardingsphere.rules.sharding.binding-tables[0]=t_parent,t_detail
-</code></pre></div><blockquote>
+<pre tabindex="0"><code>spring.shardingsphere.rules.sharding.binding-tables[0]=t_parent,t_detail
+</code></pre><blockquote>
 <p>这个问题在生产上造成了两周系统卡顿，没仔细阅读官网文档</p>
 </blockquote>
 <h2 id="特殊sql支持">特殊SQL支持</h2>
@@ -515,25 +583,37 @@ shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e"
 <p><a href="https://tech.meituan.com/2016/11/18/dianping-order-db-sharding.html">大众点评订单系统分库分表实践</a></p>
 <p><a href="https://www.cnblogs.com/qlqwjy/p/13423021.html">基于AbstractRoutingDataSource实现动态数据源</a></p>
 <p><a href="https://www.jianshu.com/p/b1209cd3686d">引入shiro后userService事务不生效原因</a></p>
+<ul class="pa0">
+  
+</ul>
+<div class="mt6 instapaper_ignoref">
+      
+      
+      </div>
+    </div>
 
-		</section>
+    <aside class="w-30-l mt6-l">
 
-		<div class="post-tags">
-			
-			
-			
-		</div>
-	</article>
-</main>
-<footer>
-  <div style="display:flex"></div>
-  <div class="footer-info">
-    2022  <a
-      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+
+
+
+</aside>
+
+  </article>
+
+    </main>
+    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://ex-melody.me" >
+    &copy;  Melody FOR Autumn 2022 
+  </a>
+    <div>
+<div class="ananke-socials">
+  
+</div>
+</div>
   </div>
 </footer>
 
-
-</div>
-    </body>
+  </body>
 </html>
