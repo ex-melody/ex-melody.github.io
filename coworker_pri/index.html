@@ -1,131 +1,61 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <title>Melody FOR Autumn</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="">
-    <meta name="generator" content="Hugo 0.92.2" />
-    
-    
-    
-    
-      <meta name="robots" content="noindex, nofollow">
-    
-
-    
-<link rel="stylesheet" href="/ananke/css/main.min.css" >
-
-
-
-    
-    
-    
-      
-
-    
-
-    
-    
-      <link href="/coworker_pri/index.xml" rel="alternate" type="application/rss+xml" title="Melody FOR Autumn" />
-      <link href="/coworker_pri/index.xml" rel="feed" type="application/rss+xml" title="Melody FOR Autumn" />
-      
-    
-    
-    <meta property="og:title" content="Coworker_pris" />
+<html><head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Coworker_pris - Melody FOR Autumn</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="" />
+	<meta property="og:image" content=""/>
+	<link rel="alternate" type="application/rss+xml" href="/coworker_pri/index.xml" title="Melody FOR Autumn" />
+	<meta property="og:title" content="Coworker_pris" />
 <meta property="og:description" content="" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="http://ex-melody.me/coworker_pri/" />
+<meta property="og:url" content="/coworker_pri/" />
 
-<meta itemprop="name" content="Coworker_pris">
-<meta itemprop="description" content=""><meta name="twitter:card" content="summary"/>
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Coworker_pris"/>
 <meta name="twitter:description" content=""/>
 
 	
-  </head>
+        <link href="/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
 
-  <body class="ma0 avenir bg-near-white">
-
-    
-
-  <header>
-    <div class="pb3-m pb6-l bg-black">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
-      
-        Melody FOR Autumn
-      
-    </a>
-    <div class="flex-l items-center">
-      
-
-      
-      
-<div class="ananke-socials">
-  
-</div>
-
-    </div>
-  </div>
-</nav>
-
-      <div class="tc-l pv3 ph3 ph4-ns">
-        <h1 class="f2 f-subheadline-l fw2 light-silver mb0 lh-title">
-          Coworker_pris
-        </h1>
-        
-      </div>
-    </div>
-  </header>
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css"   />
+	
+	
+	
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="/">Melody FOR Autumn</a>
+	</div>
+	<nav>
+		
+		<a href="/work">work</a>
+		
+		<a href="/">Home</a>
+		
+		
+	</nav>
+</header>
 
 
-    <main class="pb7" role="main">
-      
-  <article class="pa3 pa4-ns nested-copy-line-height">
-    <section class="cf ph3 ph5-l pv3 pv4-l f4 tc-l center measure-wide lh-copy mid-gray"></section>
-    <section class="flex-ns flex-wrap justify-around mt5">
-      
-        <div class="relative w-100 w-30-l mb4 bg-white">
-          <div class="relative w-100 mb4 bg-white nested-copy-line-height">
-  <div class="bg-white mb3 pa4 gray overflow-hidden">
-    <span class="f6 db">Coworker_pris</span>
-    <h1 class="f3 near-black">
-      <a href="/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/" class="link black dim">
-        
-      </a>
-    </h1>
-    <div class="nested-links f5 lh-copy nested-copy-line-height">
-      本文只讨论水平分表，垂直分表属于业务重构问题
- 为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
-为什么效率高：
- 减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
- 分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
- 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2.
-    </div>
-  </div>
-</div>
+<h1 class="page-title">All articles</h1>
 
-        </div>
-      
-    </section></article>
 
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://ex-melody.me" >
-    &copy;  Melody FOR Autumn 2022 
-  </a>
-    <div>
-<div class="ananke-socials">
-  
-</div>
-</div>
+<ul class="posts"><li class="post">
+			<a href="/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/"></a> <span class="meta">Jan 1, 0001</span>
+		</li></ul>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2022  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
   </div>
 </footer>
 
-  </body>
+
+</div>
+    </body>
 </html>

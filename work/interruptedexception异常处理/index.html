@@ -1,125 +1,59 @@
 <!DOCTYPE html>
-<html lang="en-us">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <title>InterruptedException异常处理 | Melody FOR Autumn</title>
-    <meta name="viewport" content="width=device-width,minimum-scale=1">
-    <meta name="description" content="前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
- 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码  public static void main(String[] args) {//对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束Thread.currentThread().interrupt();System.out.println(&quot;interrupt status is &quot; &#43; Thread.currentThread().isInterrupted() &#43;&quot; and Thread still alive&quot;);try {//sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。Thread.currentThread().sleep(2000);} catch (InterruptedException e) {if (Thread.currentThread().isInterrupted()) {System.out.println(&quot;interrupt status now is true&quot;);} else {//阻塞方法抛出异常后，中断标志位发现已被更新为falseSystem.out.println(&quot;after throw exception,interrupt status now is false&quot;);}//重新设置标志位为true，保留线程根据标志位响应中断通知的能力Thread.currentThread().interrupt();}if (Thread.interrupted()) {System.out.println(&quot;set interrupt status as True&quot;);if (!">
-    <meta name="generator" content="Hugo 0.92.2" />
-    
-    
-    
-    
-      <meta name="robots" content="noindex, nofollow">
-    
-
-    
-<link rel="stylesheet" href="/ananke/css/main.min.css" >
-
-
-
-    
-    
-    
-      
-
-    
-
-    
-    
-    <meta property="og:title" content="InterruptedException异常处理" />
+<html><head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>InterruptedException异常处理 - Melody FOR Autumn</title><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
+ 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; &#43; Thread.currentThread().isInterrupted() &#43;&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!" />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="InterruptedException异常处理" />
 <meta property="og:description" content="前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
- 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码  public static void main(String[] args) {//对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束Thread.currentThread().interrupt();System.out.println(&quot;interrupt status is &quot; &#43; Thread.currentThread().isInterrupted() &#43;&quot; and Thread still alive&quot;);try {//sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。Thread.currentThread().sleep(2000);} catch (InterruptedException e) {if (Thread.currentThread().isInterrupted()) {System.out.println(&quot;interrupt status now is true&quot;);} else {//阻塞方法抛出异常后，中断标志位发现已被更新为falseSystem.out.println(&quot;after throw exception,interrupt status now is false&quot;);}//重新设置标志位为true，保留线程根据标志位响应中断通知的能力Thread.currentThread().interrupt();}if (Thread.interrupted()) {System.out.println(&quot;set interrupt status as True&quot;);if (!" />
+ 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; &#43; Thread.currentThread().isInterrupted() &#43;&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="http://ex-melody.me/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" /><meta property="article:section" content="work" />
+<meta property="og:url" content="/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" /><meta property="article:section" content="work" />
 <meta property="article:published_time" content="2022-09-14T05:49:55+00:00" />
 <meta property="article:modified_time" content="2022-09-14T05:49:55+00:00" />
 
-<meta itemprop="name" content="InterruptedException异常处理">
-<meta itemprop="description" content="前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
- 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码  public static void main(String[] args) {//对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束Thread.currentThread().interrupt();System.out.println(&quot;interrupt status is &quot; &#43; Thread.currentThread().isInterrupted() &#43;&quot; and Thread still alive&quot;);try {//sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。Thread.currentThread().sleep(2000);} catch (InterruptedException e) {if (Thread.currentThread().isInterrupted()) {System.out.println(&quot;interrupt status now is true&quot;);} else {//阻塞方法抛出异常后，中断标志位发现已被更新为falseSystem.out.println(&quot;after throw exception,interrupt status now is false&quot;);}//重新设置标志位为true，保留线程根据标志位响应中断通知的能力Thread.currentThread().interrupt();}if (Thread.interrupted()) {System.out.println(&quot;set interrupt status as True&quot;);if (!"><meta itemprop="datePublished" content="2022-09-14T05:49:55+00:00" />
-<meta itemprop="dateModified" content="2022-09-14T05:49:55+00:00" />
-<meta itemprop="wordCount" content="104">
-<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="InterruptedException异常处理"/>
 <meta name="twitter:description" content="前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
- 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码  public static void main(String[] args) {//对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束Thread.currentThread().interrupt();System.out.println(&quot;interrupt status is &quot; &#43; Thread.currentThread().isInterrupted() &#43;&quot; and Thread still alive&quot;);try {//sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。Thread.currentThread().sleep(2000);} catch (InterruptedException e) {if (Thread.currentThread().isInterrupted()) {System.out.println(&quot;interrupt status now is true&quot;);} else {//阻塞方法抛出异常后，中断标志位发现已被更新为falseSystem.out.println(&quot;after throw exception,interrupt status now is false&quot;);}//重新设置标志位为true，保留线程根据标志位响应中断通知的能力Thread.currentThread().interrupt();}if (Thread.interrupted()) {System.out.println(&quot;set interrupt status as True&quot;);if (!"/>
+ 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&#34;interrupt status is &#34; &#43; Thread.currentThread().isInterrupted() &#43;&#34; and Thread still alive&#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&#34;interrupt status now is true&#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&#34;after throw exception,interrupt status now is false&#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&#34;set interrupt status as True&#34;); if (!"/>
 
 	
-  </head>
+        <link href="/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
+	
 
-  <body class="ma0 avenir bg-near-white">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/css/main.ac08a4c9714baa859217f92f051deb58df2938ec352b506df655005dcaf98cc0.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="/css/dark.726cd11ca6eb7c4f7d48eb420354f814e5c1b94281aaf8fd0511c1319f7f78a4.css"   />
+	
+	
+	
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="/">Melody FOR Autumn</a>
+	</div>
+	<nav>
+		
+		<a href="/work">work</a>
+		
+		<a href="/">Home</a>
+		
+		
+	</nav>
+</header>
 
-    
-   
-  
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">InterruptedException异常处理</h1>
+			<div class="meta">Posted on Sep 14, 2022</div>
+		</div>
+		
 
-  <header>
-    <div class="bg-black">
-      <nav class="pv3 ph3 ph4-ns" role="navigation">
-  <div class="flex-l justify-between items-center center">
-    <a href="/" class="f3 fw2 hover-white no-underline white-90 dib">
-      
-        Melody FOR Autumn
-      
-    </a>
-    <div class="flex-l items-center">
-      
-
-      
-      
-<div class="ananke-socials">
-  
-</div>
-
-    </div>
-  </div>
-</nav>
-
-    </div>
-  </header>
-
-
-
-    <main class="pb7" role="main">
-      
-  
-  <article class="flex-l flex-wrap justify-between mw8 center ph3">
-    <header class="mt4 w-100">
-      <aside class="instapaper_ignoref b helvetica tracked">
-          
-        WORKS
-      </aside>
-      
-
-
-
-
-
-
-
-
-
-
-  <div id="sharing" class="mt3 ananke-socials">
-    
-  </div>
-
-
-      <h1 class="f1 athelas mt3 mb1">InterruptedException异常处理</h1>
-      
-      
-      
-      <time class="f6 mv4 dib tracked" datetime="2022-09-14T05:49:55Z">September 14, 2022</time>
-      
-
-      
-      
-    </header>
-    <div class="nested-copy-line-height lh-copy serif f4 nested-links mid-gray pr4-l w-two-thirds-l"><h3 id="前置知识">前置知识</h3>
+		<section class="body">
+			<h3 id="前置知识">前置知识</h3>
 <ul>
 <li>InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。</li>
 <li>interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。</li>
@@ -133,71 +67,59 @@
 <li>不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。</li>
 </ul>
 <h3 id="实验代码">实验代码</h3>
-<pre tabindex="0"><code>    public static void main(String[] args) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">    public static void main(String[] args) {
         //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束
         Thread.currentThread().interrupt();
-        System.out.println(&quot;interrupt status is &quot; + Thread.currentThread().isInterrupted() +&quot; and Thread still alive&quot;);
+        System.out.println(&#34;interrupt status is &#34; + Thread.currentThread().isInterrupted() +&#34; and Thread still alive&#34;);
         try {
             //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。
             Thread.currentThread().sleep(2000);
         } catch (InterruptedException e) {
             if (Thread.currentThread().isInterrupted()) {
-                System.out.println(&quot;interrupt status now is true&quot;);
+                System.out.println(&#34;interrupt status now is true&#34;);
             } else {
                 //阻塞方法抛出异常后，中断标志位发现已被更新为false
-                System.out.println(&quot;after throw exception,interrupt status now is false&quot;);
+                System.out.println(&#34;after throw exception,interrupt status now is false&#34;);
             }
             //重新设置标志位为true，保留线程根据标志位响应中断通知的能力
             Thread.currentThread().interrupt();
         }
         if (Thread.interrupted()) {
-            System.out.println(&quot;set interrupt status as True&quot;);
+            System.out.println(&#34;set interrupt status as True&#34;);
             if (!Thread.currentThread().isInterrupted()) {
                 //发现interrupted()方法检查后就将标志位清理为false
-                System.out.println(&quot;Method:Thread.interrupted() find interrupt status is true and clean it as flase&quot;);
+                System.out.println(&#34;Method:Thread.interrupted() find interrupt status is true and clean it as flase&#34;);
                 Thread.currentThread().interrupt();
             }
         }
         if (Thread.currentThread().isInterrupted()) {
             if (Thread.currentThread().isInterrupted()) {
                 //isInterrupted()仅仅检查标志位
-                System.out.println(&quot;Method: isInterrupted() just check status&quot;);
+                System.out.println(&#34;Method: isInterrupted() just check status&#34;);
                 //线程内部自行决定是否要根据中断通知结束线程
                 return;
             }
         }
     }
-</code></pre><ul class="pa0">
-  
-</ul>
-<div class="mt6 instapaper_ignoref">
-      
-      
-      </div>
-    </div>
+</code></pre></div>
+		</section>
 
-    <aside class="w-30-l mt6-l">
-
-
-
-
-</aside>
-
-  </article>
-
-    </main>
-    <footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
-  <div class="flex justify-between">
-  <a class="f4 fw4 hover-white no-underline white-70 dn dib-ns pv2 ph3" href="http://ex-melody.me" >
-    &copy;  Melody FOR Autumn 2022 
-  </a>
-    <div>
-<div class="ananke-socials">
-  
-</div>
-</div>
+		<div class="post-tags">
+			
+			
+			
+		</div>
+	</article>
+</main>
+<footer>
+  <div style="display:flex"></div>
+  <div class="footer-info">
+    2022  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
   </div>
 </footer>
 
-  </body>
+
+</div>
+    </body>
 </html>

@@ -2,27 +2,27 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Works on Melody FOR Autumn</title>
-    <link>http://ex-melody.me/work/</link>
+    <link>/work/</link>
     <description>Recent content in Works on Melody FOR Autumn</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <lastBuildDate>Wed, 14 Sep 2022 05:49:55 +0000</lastBuildDate><atom:link href="http://ex-melody.me/work/index.xml" rel="self" type="application/rss+xml" />
+    <language>zh-CN</language>
+    <lastBuildDate>Wed, 14 Sep 2022 05:49:55 +0000</lastBuildDate><atom:link href="/work/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>InterruptedException异常处理</title>
-      <link>http://ex-melody.me/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</link>
+      <link>/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</link>
       <pubDate>Wed, 14 Sep 2022 05:49:55 +0000</pubDate>
       
-      <guid>http://ex-melody.me/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</guid>
+      <guid>/work/interruptedexception%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</guid>
       <description>前置知识  InterruptedException代表在当前线程阻塞时，有其他线程调用了当前线程的interrupt()方法，当前线程收到了中断通知，中断标志位被设置为true。 interrupt()会将线程内的中断标志位更新为true，线程可自行检查标志位是否为true并结束线程（开发者自行编写代码，没有相关代码就不对中断通知做响应）。若标志位为true时，线程在执行阻塞方法（sleep(),wait()等），就会抛出InterruptedException。 抛出InterruptedException的同时会将线程中断标志位更新为false（若仅捕获该异常而不做处理，当前线程会失去响应外界中断通知的能力，无法通过中断标志位的变化察觉是否收到中断通知）。 InterruptedException异常会将处理标志位更新为false，是因为阻塞方法使用了Thread类的静态方法isInterrupted()检查当前标志位是否为true，该方法在检查标志位后就会将标志位更新为false。  处理方式 虽然大部分场景可能没有线程要响应外界中断通知的需求，但最好还是通过以下两种方式保留线程知晓并处理外界中断通知的能力。
- 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码  public static void main(String[] args) {//对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束Thread.currentThread().interrupt();System.out.println(&amp;quot;interrupt status is &amp;quot; + Thread.currentThread().isInterrupted() +&amp;quot; and Thread still alive&amp;quot;);try {//sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。Thread.currentThread().sleep(2000);} catch (InterruptedException e) {if (Thread.currentThread().isInterrupted()) {System.out.println(&amp;quot;interrupt status now is true&amp;quot;);} else {//阻塞方法抛出异常后，中断标志位发现已被更新为falseSystem.out.println(&amp;quot;after throw exception,interrupt status now is false&amp;quot;);}//重新设置标志位为true，保留线程根据标志位响应中断通知的能力Thread.currentThread().interrupt();}if (Thread.interrupted()) {System.out.println(&amp;quot;set interrupt status as True&amp;quot;);if (!</description>
+ 对外抛出不做额外封装的InterruptedException，由上层方法决定如何处理该异常，如果异常被抛出到线程之外，相当于线程响应中断通知直接结束了。 不能抛出异常的情况下，需要调用interrupt()方法将中断标志位更新为true，保留方法知晓外界中断通知并做响应处理的能力。线程可自定义代码根据中断标志位的状态判断是否收到中断通知，并决定要不要结束线程。  实验代码 public static void main(String[] args) { //对当前线程发出中断通知，实质上仅仅是将线程的中断标志位设置为true,需要线程根据中断标志位的状态做相应处理，线程自身并不会直接结束 Thread.currentThread().interrupt(); System.out.println(&amp;#34;interrupt status is &amp;#34; + Thread.currentThread().isInterrupted() +&amp;#34; and Thread still alive&amp;#34;); try { //sleep让线程阻塞，阻塞过程中发现中断标志位是true立刻抛出异常。 Thread.currentThread().sleep(2000); } catch (InterruptedException e) { if (Thread.currentThread().isInterrupted()) { System.out.println(&amp;#34;interrupt status now is true&amp;#34;); } else { //阻塞方法抛出异常后，中断标志位发现已被更新为false System.out.println(&amp;#34;after throw exception,interrupt status now is false&amp;#34;); } //重新设置标志位为true，保留线程根据标志位响应中断通知的能力 Thread.currentThread().interrupt(); } if (Thread.interrupted()) { System.out.println(&amp;#34;set interrupt status as True&amp;#34;); if (!</description>
     </item>
     
     <item>
       <title>MySQL事务不支持Truncate命令和其他操作一起回滚</title>
-      <link>http://ex-melody.me/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E5%91%BD%E4%BB%A4%E5%92%8C%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C%E4%B8%80%E8%B5%B7%E5%9B%9E%E6%BB%9A/</link>
+      <link>/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E5%91%BD%E4%BB%A4%E5%92%8C%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C%E4%B8%80%E8%B5%B7%E5%9B%9E%E6%BB%9A/</link>
       <pubDate>Sat, 10 Sep 2022 05:49:55 +0000</pubDate>
       
-      <guid>http://ex-melody.me/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E5%91%BD%E4%BB%A4%E5%92%8C%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C%E4%B8%80%E8%B5%B7%E5%9B%9E%E6%BB%9A/</guid>
+      <guid>/work/mysql%E4%BA%8B%E5%8A%A1%E4%B8%8D%E6%94%AF%E6%8C%81truncate%E5%91%BD%E4%BB%A4%E5%92%8C%E5%85%B6%E4%BB%96%E6%93%8D%E4%BD%9C%E4%B8%80%E8%B5%B7%E5%9B%9E%E6%BB%9A/</guid>
       <description>Data Manipulation Language (DML) 数据操作语言 （select，insert，update等，主要用于调整查询数据 ）
   Data Definition Language (DDL) 数据定义语言 （CREATE,TRUNCATE,DROP,ALTER等，主要用于调整数据库的定义结构等元数据 ）
 根据https://dev.mysql.com/doc/refman/8.0/en/atomic-ddl.html文档， mysql提供了原子性的DDL语句，每次执行truncate操作都会直接提交COMMIT，要么成功要么失败，但无法与其他语句一起组合成为事务
@@ -31,10 +31,10 @@
     
     <item>
       <title>ebayAPI请求新增的签名机制处理流程，java</title>
-      <link>http://ex-melody.me/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/</link>
+      <link>/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/</link>
       <pubDate>Thu, 18 Aug 2022 05:49:55 +0000</pubDate>
       
-      <guid>http://ex-melody.me/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/</guid>
+      <guid>/work/ebayapi%E8%AF%B7%E6%B1%82%E6%96%B0%E5%A2%9E%E7%9A%84%E7%AD%BE%E5%90%8D%E6%9C%BA%E5%88%B6%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B-java/</guid>
       <description>部分站点因为新的安全政策，API请求需要额外新增四个header  x-ebay-signature-key将RSA公钥或ed25519公钥 转为jwe格式，公钥文件从ebay后续api下载 Content-Digest http请求body的内容摘要,使用SHA-256算法处理body生成摘要 Signature-Input 决定由哪些字段拼接为signature-base Signature 通过私钥对signature-base进行签名的得到 请求头的名字大小写不敏感  流程   通过ebay未来提供的api下载公钥私钥文件。
   将公钥转为jwe格式的字符串作为请求header x-ebay-signature-key。
   为api请求的body内容计算摘要content-digest，作为请求header Content-Digest
@@ -43,15 +43,15 @@ URI uri = URI.create(url); String method = uri.getMethod();
   使用私钥文件为刚刚构造的signatureBase签名作为请求header Signature。
   拼接signature base的格式要求   详细的格式要求和签名机制可参考文档https://www.ietf.org/archive/id/draft-ietf-httpbis-message-signatures-11.html
   signature base每一行都是&amp;quot;key&amp;rdquo;: value\n的形式，key用&amp;quot;&amp;ldquo;括起来并且全部小写，冒号后附加单独的空格，value结束后换行。最后一行是@signature-params。 ebay指定了请求header signature-Input为
-  signature-Input:sig1=(&amp;quot;content-digest&amp;quot; &amp;quot;x-ebay-signature-key&amp;quot; &amp;quot;@method&amp;quot; &amp;quot;@path&amp;quot; &amp;quot;@authority&amp;quot;);created=1658272908   created后面附加的是时间戳。</description>
+  signature-Input:sig1=(&amp;#34;content-digest&amp;#34; &amp;#34;x-ebay-signature-key&amp;#34; &amp;#34;@method&amp;#34; &amp;#34;@path&amp;#34; &amp;#34;@authority&amp;#34;);created=1658272908   created后面附加的是时间戳。</description>
     </item>
     
     <item>
       <title>类目同步是否支持多属性</title>
-      <link>http://ex-melody.me/work/%E6%9B%B4%E6%96%B0%E7%B1%BB%E7%9B%AE%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B1%9E%E6%80%A7/</link>
+      <link>/work/%E6%9B%B4%E6%96%B0%E7%B1%BB%E7%9B%AE%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B1%9E%E6%80%A7/</link>
       <pubDate>Thu, 18 Aug 2022 05:49:55 +0000</pubDate>
       
-      <guid>http://ex-melody.me/work/%E6%9B%B4%E6%96%B0%E7%B1%BB%E7%9B%AE%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B1%9E%E6%80%A7/</guid>
+      <guid>/work/%E6%9B%B4%E6%96%B0%E7%B1%BB%E7%9B%AE%E6%98%AF%E5%90%A6%E6%94%AF%E6%8C%81%E5%A4%9A%E5%B1%9E%E6%80%A7/</guid>
       <description>类目同步是否支持多属性  接口只返回与父类目不一致的类目，以及站点的默认配置 调用接口获取所有与父类目不一致的类目id 查询类目表，获取这批类目的所属层级 将接口返回的类目id按层级分组，并从类目树最底层的类目开始向上遍历层级 遍历到的当前层级，本层类目按true和false分组，每一组更新他们所有还未标记是否支持多属性的子类目 将所有剩下未标记是否支持多属性的类目更新为站点默认配置  </description>
     </item>
     
