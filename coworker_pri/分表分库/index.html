@@ -2,10 +2,20 @@
 <html><head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title> - Melody FOR Autumn</title><meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="" />
+	<meta name="description" content="本文只讨论水平分表，垂直分表属于业务重构问题
+ 为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
+为什么效率高：
+ 减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
+ 分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
+ 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2." />
 	<meta property="og:image" content=""/>
 	<meta property="og:title" content="" />
-<meta property="og:description" content="" />
+<meta property="og:description" content="本文只讨论水平分表，垂直分表属于业务重构问题
+ 为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
+为什么效率高：
+ 减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
+ 分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
+ 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://ex-melody.me/coworker_pri/%E5%88%86%E8%A1%A8%E5%88%86%E5%BA%93/" /><meta property="article:section" content="coworker_pri" />
 
@@ -13,7 +23,12 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
-<meta name="twitter:description" content=""/>
+<meta name="twitter:description" content="本文只讨论水平分表，垂直分表属于业务重构问题
+ 为什么分表 参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2 通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。
+为什么效率高：
+ 减少单表数据、索引大小，提高读写效率 开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读） 提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可  带来的问题：
+ 分表后表结构维护，数据运维 多线程写、跨库写时事务问题 复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行   举个例子 TODO
+ 技术选型     ShardingJDBC Mycat     分库 支持 支持   分表 支持 支持   实现方式 解析改写SQL 中间层代理   性能 损耗低 损耗略高   使用 引用jar包 需单独安装管理端   社区 star 15.1k Apache-2.0许可 star 9.2k GPL-2."/>
 
 	
         <link href="http://ex-melody.me/css/fonts.2c2227b81b1970a03e760aa2e6121cd01f87c88586803cbb282aa224720a765f.css" rel="stylesheet">
@@ -50,7 +65,457 @@
 		
 
 		<section class="body">
-			
+			<blockquote>
+<p>本文只讨论水平分表，垂直分表属于业务重构问题</p>
+</blockquote>
+<h1 id="为什么分表">为什么分表</h1>
+<p>参考下图，t_user表根据业务字段id拆分，奇数放入table1，偶数放入table2
+<img src="https://shardingsphere.apache.org/document/current/img/sharding/horizontal_sharding.png" alt="水平分片"></p>
+<p>通过一个或多个字段/规则将数据分散到多个数据库、数据表中，使得业务数据突破单表性能瓶颈。</p>
+<p>为什么效率高：</p>
+<ol>
+<li>减少单表数据、索引大小，提高读写效率</li>
+<li>开多个线程并发读写分片数据（十个线程分别从一千万表中读 VS 一个线程从一亿表中读）</li>
+<li>提前缩小读写范围，sql条件中有id（分片列），只需要读写对应分片表即可</li>
+</ol>
+<p>带来的问题：</p>
+<ol>
+<li>分表后表结构维护，数据运维</li>
+<li>多线程写、跨库写时事务问题</li>
+<li>复杂sql，insert into select,分表字段列update、limit、order by、group by某些情况下不能正确执行</li>
+</ol>
+<blockquote>
+<p>举个例子 TODO</p>
+</blockquote>
+<h1 id="技术选型">技术选型</h1>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>ShardingJDBC</th>
+<th>Mycat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分库</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>分表</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>实现方式</td>
+<td>解析改写SQL</td>
+<td>中间层代理</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>损耗低</td>
+<td>损耗略高</td>
+</tr>
+<tr>
+<td>使用</td>
+<td>引用jar包</td>
+<td>需单独安装管理端</td>
+</tr>
+<tr>
+<td>社区</td>
+<td>star 15.1k Apache-2.0许可</td>
+<td>star 9.2k GPL-2.0许可</td>
+</tr>
+<tr>
+<td>官网</td>
+<td><a href="https://shardingsphere.apache.org/">https://shardingsphere.apache.org/</a></td>
+<td><a href="http://mycat.org.cn/">http://mycat.org.cn/</a></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>选择ShardingJDBC， 分表性能损耗低，实现方式容易理解，无需单独安装服务端。 11月刚发布了5.0正式版</p>
+<blockquote>
+<p>ShardingJDBC4.0后，官方将ShardingJDBC、ShardingProxy统一为ShardingSphere</p>
+</blockquote>
+<h1 id="shardingjdbc">ShardingJDBC</h1>
+<blockquote>
+<p>分片算法写的很啰嗦，可以瞄一眼跳过。</p>
+</blockquote>
+<h2 id="内置分片算法">内置分片算法</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><em>SPI 名称</em></th>
+<th style="text-align:left"><em>详细说明</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ShardingAlgorithm</td>
+<td style="text-align:left">分片算法</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><em>已知实现类</em></th>
+<th style="text-align:left"><em>详细说明</em></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">BoundaryBasedRangeShardingAlgorithm</td>
+<td style="text-align:left">基于分片边界的范围分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">VolumeBasedRangeShardingAlgorithm</td>
+<td style="text-align:left">基于分片容量的范围分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">ComplexInlineShardingAlgorithm</td>
+<td style="text-align:left">基于行表达式的复合分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">AutoIntervalShardingAlgorithm</td>
+<td style="text-align:left">基于可变时间范围的分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">ClassBasedShardingAlgorithm</td>
+<td style="text-align:left">基于自定义类的分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">HintInlineShardingAlgorithm</td>
+<td style="text-align:left">基于行表达式的Hint分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">IntervalShardingAlgorithm</td>
+<td style="text-align:left">基于固定时间范围的分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">HashModShardingAlgorithm</td>
+<td style="text-align:left">基于哈希取模的分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">InlineShardingAlgorithm</td>
+<td style="text-align:left">基于行表达式的分片算法</td>
+</tr>
+<tr>
+<td style="text-align:left">ModShardingAlgorithm</td>
+<td style="text-align:left">基于取模的分片算法</td>
+</tr>
+</tbody>
+</table>
+<p>官方提供了几种常用的分片算法，分为三大类</p>
+<h3 id="精确分片算法">精确分片算法</h3>
+<p>根据分片key，直接计算出数据表，一般用于非范围分片key，buyerId，orderId等</p>
+<h4 id="inlineshardingalgorithm">InlineShardingAlgorithm</h4>
+<p>根据表达式t_order_$-&gt;{order_id % 4}，计算分片表</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">inlineShardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> InlineShardingAlgorithm<span style="color:#f92672">();</span>
+        inlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;algorithm-expression&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;t_order_$-&gt;{order_id % 4}&#34;</span><span style="color:#f92672">);</span>
+        inlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;allow-range-query-with-inline-sharding&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;true&#34;</span><span style="color:#f92672">);</span>
+</code></pre></div><h4 id="complexinlineshardingalgorithm">ComplexInlineShardingAlgorithm</h4>
+<p>多个分片key</p>
+<p>t_order表根据type、order列分表，分片表为t_order_0_0、t_order_0_1、t_order_1_0、t_order_1_1</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">complexInlineShardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ComplexInlineShardingAlgorithm<span style="color:#f92672">();</span>
+complexInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;algorithm-expression&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;t_order_${type % 2}_${order_id % 2}&#34;</span><span style="color:#f92672">);</span>
+complexInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sharding-columns&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;type,order_id&#34;</span><span style="color:#f92672">);</span>
+complexInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+</code></pre></div><h4 id="hashmodshardingalgorithm">HashModShardingAlgorithm</h4>
+<p>将t_order根据buyer_id(varchar 20) hash后分为四片，  key.hashCode()%4,</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">shardingAlgorithm = new HashModShardingAlgorithm();
+        shardingAlgorithm.getProps().setProperty(&#34;sharding-count&#34;, &#34;4&#34;);
+</code></pre></div><h4 id="hintinlineshardingalgorithm">HintInlineShardingAlgorithm</h4>
+<p>强制指定要查询的表，不根据SQL解析。例如下面代码查询表为t_order_0%4</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">hintInlineShardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HintInlineShardingAlgorithm<span style="color:#f92672">();</span>
+Properties props <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Properties<span style="color:#f92672">();</span>
+props<span style="color:#f92672">.</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;algorithm-expression&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;t_order_$-&gt;{value % 4}&#34;</span><span style="color:#f92672">);</span>
+hintInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">setProps</span><span style="color:#f92672">(</span>props<span style="color:#f92672">);</span>
+hintInlineShardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+<span style="color:#75715e">//手动指定分片
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">final</span> HintManager hintManager <span style="color:#f92672">=</span> HintManager<span style="color:#f92672">.</span><span style="color:#a6e22e">getInstance</span><span style="color:#f92672">();</span>
+hintManager<span style="color:#f92672">.</span><span style="color:#a6e22e">addTableShardingValue</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;t_order&#34;</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+orderService<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>122343L<span style="color:#f92672">);</span>
+</code></pre></div><h3 id="范围分片算法">范围分片算法</h3>
+<p>根据设置的分片key范围，定位数据表。datetime、id等</p>
+<h4 id="boundarybasedrangeshardingalgorithm">BoundaryBasedRangeShardingAlgorithm</h4>
+<p>自定义分片边界算法</p>
+<p>-∞~10000  table0</p>
+<p>10000~20000 table1</p>
+<p>20000~30000 table2</p>
+<p>30000~∞ table3</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">BoundaryBasedRangeShardingAlgorithm shardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span>           BoundaryBasedRangeShardingAlgorithm<span style="color:#f92672">();</span>
+    shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sharding-ranges&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;10000,20000,30000&#34;</span><span style="color:#f92672">);</span>
+    shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+</code></pre></div><h3 id="容量分片算法">容量分片算法</h3>
+<p>其实就是范围分片的变种，分片规则以容量配置，一般用于有序并知道预期范围分片key</p>
+<h4 id="volumebasedrangeshardingalgorithm">VolumeBasedRangeShardingAlgorithm</h4>
+<p>自定义分片容量</p>
+<p>分片key预期在0-100万，将此区间内数据均匀分片，每片最多10万数据</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">VolumeBasedRangeShardingAlgorithm shardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> VolumeBasedRangeShardingAlgorithm<span style="color:#f92672">();</span>
+shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;range-lower&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;0&#34;</span><span style="color:#f92672">);</span>
+shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;range-upper&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;1000000&#34;</span><span style="color:#f92672">);</span>
+shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sharding-volume&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;100000&#34;</span><span style="color:#f92672">);</span>
+shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+</code></pre></div><h4 id="autointervalshardingalgorithm">AutoIntervalShardingAlgorithm</h4>
+<p>根据分片key时间均分</p>
+<p>t_order表 根据order_time（预期20年-21年），每天分一片，分片表为t_order_0，t_order_1&hellip;t_order_366</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">shardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AutoIntervalShardingAlgorithm<span style="color:#f92672">();</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-lower&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;2020-01-01 00:00:00&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-upper&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;2021-01-01 00:00:16&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sharding-seconds&#34;</span><span style="color:#f92672">,</span> String<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>3600<span style="color:#f92672">*</span>24<span style="color:#f92672">));</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+</code></pre></div><h4 id="intervalshardingalgorithm">IntervalShardingAlgorithm</h4>
+<p>基于时间单位分片</p>
+<p>t_order 根据order_time，每月分一片，分片表为t_order_0,t_order_1，t_order_2&hellip;t_order_59</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> shardingAlgorithmByMonth <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> IntervalShardingAlgorithm<span style="color:#f92672">();</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-pattern&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;yyyy-MM-dd HH:mm:ss&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-lower&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;2016-01-01 00:00:00&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-upper&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;2021-12-31 00:00:00&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sharding-suffix-pattern&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;yyyyMM&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-interval-amount&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;1&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;datetime-interval-unit&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Months&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithmByMonth<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+</code></pre></div><h3 id="自定义算法">自定义算法</h3>
+<p>自己实现分片规则</p>
+<h4 id="classbasedshardingalgorithm">ClassBasedShardingAlgorithm</h4>
+<p>自定义类分片算法</p>
+<p>最灵活的分片算法，任意实现业务逻辑</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">shardingAlgorithm <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ClassBasedShardingAlgorithm<span style="color:#f92672">();</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;strategy&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;standard&#34;</span><span style="color:#f92672">);</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">getProps</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setProperty</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;algorithmClassName&#34;</span><span style="color:#f92672">,</span> ClassBasedStandardShardingAlgorithmFixture<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">());</span>
+        shardingAlgorithm<span style="color:#f92672">.</span><span style="color:#a6e22e">init</span><span style="color:#f92672">();</span>
+</code></pre></div><h1 id="使用">使用</h1>
+<h2 id="项目配置">项目配置</h2>
+<p>application-dev.properties</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback"># 直接看项目配置
+</code></pre></div><p>TradeMybatisConfigurer.java 定义主数据源</p>
+<h2 id="动态数据源切换">动态数据源切换</h2>
+<p>将分表数据源定义为主数据源，对于某些SQL，ShardingJDBC不支持，这种情况需要我们手动切换为普通数据源（druid）</p>
+<p>使用Spring提供的AbstractRoutingDataSource实现数据源切换</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * 动态事务
+</span><span style="color:#75715e"> * @author zhaoyd
+</span><span style="color:#75715e"> * @date 2021-12-27
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DynamicDataSource</span> <span style="color:#66d9ef">extends</span> AbstractRoutingDataSource <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> InheritableThreadLocal<span style="color:#f92672">&lt;</span>DataSourceKeyEnum<span style="color:#f92672">&gt;</span> CONTEXT_HOLDER <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> InheritableThreadLocal<span style="color:#f92672">&lt;&gt;();</span>
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 初始化数据源
+</span><span style="color:#75715e">     * @param defaultTargetDataSource
+</span><span style="color:#75715e">     * @param targetDataSources
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">DynamicDataSource</span><span style="color:#f92672">(</span>DataSource defaultTargetDataSource<span style="color:#f92672">,</span> Map<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">,</span> Object<span style="color:#f92672">&gt;</span> targetDataSources<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setDefaultTargetDataSource</span><span style="color:#f92672">(</span>defaultTargetDataSource<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setTargetDataSources</span><span style="color:#f92672">(</span>targetDataSources<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">afterPropertiesSet</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">protected</span> Object <span style="color:#a6e22e">determineCurrentLookupKey</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> getDataSourceKey<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setDataSourceKey</span><span style="color:#f92672">(</span>DataSourceKeyEnum dataSource<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        CONTEXT_HOLDER<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>dataSource<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> DataSourceKeyEnum <span style="color:#a6e22e">getDataSourceKey</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> CONTEXT_HOLDER<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">clearDataSourceKey</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        CONTEXT_HOLDER<span style="color:#f92672">.</span><span style="color:#a6e22e">remove</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>自定义数据源切换注解@EnableDataSource(DataSourceKeyEnum)，通过AOP拦截下注解。很简单</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e">     * 合并所有订单
+</span><span style="color:#75715e">     */</span>
+    <span style="color:#a6e22e">@EnableDataSource</span><span style="color:#f92672">(</span>DataSourceKeyEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">TRADE</span><span style="color:#f92672">)</span><span style="color:#75715e">//表示使用非分片的druid数据源
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;mergeallorder.html&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">public</span> JsonDataDto <span style="color:#a6e22e">mergeAllOrder</span><span style="color:#f92672">(</span>PlatOrderMergeSearchDto queryBean<span style="color:#f92672">,</span> HttpServletRequest request<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> BaseAppException<span style="color:#f92672">{</span>
+        Boolean isIgnoreLogis <span style="color:#f92672">=</span> BooleanUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">toBoolean</span><span style="color:#f92672">(</span>request<span style="color:#f92672">.</span><span style="color:#a6e22e">getParameter</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;isIgnoreLogis&#34;</span><span style="color:#f92672">));</span>
+        AssertUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">notNull</span><span style="color:#f92672">(</span>isIgnoreLogis<span style="color:#f92672">);</span>
+        List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> mergeResult <span style="color:#f92672">=</span> mergeOrderBusiService<span style="color:#f92672">.</span><span style="color:#a6e22e">mergeAllOrder</span><span style="color:#f92672">(</span>queryBean<span style="color:#f92672">,</span> isIgnoreLogis<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> JsonDataDto<span style="color:#f92672">(</span>mergeResult<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><h1 id="分布式id">分布式ID</h1>
+<p>分表后，无法使用单表自增ID，需要使用分布式ID方案来生成唯一ID</p>
+<p>分布式ID方案有三种</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>示例</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UUID</td>
+<td>91c606f6-d87f-4dd1-80b2-414b6ac38ad0</td>
+<td>无单点问题，实现最简单</td>
+<td>无序，32位字符串长，可读性差</td>
+</tr>
+<tr>
+<td>号段模式</td>
+<td>211790001-211800001（Long）</td>
+<td>效率高，趋势递增，和自增ID基本一致</td>
+<td>依赖单点生成，实现复杂(需解决并发)</td>
+</tr>
+<tr>
+<td>雪花算法</td>
+<td><img src="https://pic4.zhimg.com/80/v2-0ca4a4125b1cbda69cfa972b1e568ffb_720w.jpg" alt=""></td>
+<td>无单点问题，效率高，趋势递增有可读性</td>
+<td>64位太长，需要解决时钟回拨问题</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>时钟回拨： 服务器每隔一段时间会从网络时钟服务器校时，如果某次校时，由15:01退回到15:00.这时候ID就会重复。</p>
+<p>大部分解决时钟回拨的方法是服务将历史一段时间内（例如一小时）每个毫秒的最大自增序号保存起来</p>
+</blockquote>
+<p>项目采用的是号段模式，主要考虑到下面几点</p>
+<ol>
+<li>雪花算法需要对每台应用单独维护一个workerID，无论是配置文件直接配置还是通过redis、zookeeper注册都很麻烦，<a href="https://blog.csdn.net/u013465194/article/details/83385198">看这个</a></li>
+<li>UUID需要修改ID数据类型，而且是无序的。插入数据时会重构索引B+树（回忆下白泽上树老师的mysql分享），占用空间大</li>
+<li>号段模式生成ID，在数据格式，长度和原来自增一致，唯一缺点时不能保证严格的自增（两台cps申请号段分别为100-200,200-300，会出现id=250的create_time 小于id=150的情况）</li>
+</ol>
+<h3 id="号段模式实现">号段模式实现</h3>
+<ol>
+<li>数据库维护一张号段表，每台服务根据biz_tag取一定长度的号段，放在服务内号段缓存中</li>
+<li>每次数据插入，先从服务内号段缓存取一个id，如果缓存用完，则从号段表中初再初始化一批号段</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>biz_tag</th>
+<th>next_id</th>
+<th>step</th>
+<th>remark</th>
+<th>update_time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prod_sync_p_shopee</td>
+<td>211790001</td>
+<td>10000</td>
+<td>shopee同步父表</td>
+<td>2022-1-6 22:26</td>
+</tr>
+<tr>
+<td>prod_sync_s_shopee</td>
+<td>750310001</td>
+<td>10000</td>
+<td>shopee同步子表</td>
+<td>2022-1-6 23:18</td>
+</tr>
+<tr>
+<td>test</td>
+<td>1</td>
+<td>100</td>
+<td>test</td>
+<td>2021-11-24 15:33</td>
+</tr>
+</tbody>
+</table>
+<p>给实体类加上注解即可，实现细节：SegmentIdGenerator.java</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProdSyncPShopee</span> <span style="color:#66d9ef">extends</span> ShardingBaseBean <span style="color:#f92672">{</span>
+    <span style="color:#a6e22e">@Id</span>
+    <span style="color:#a6e22e">@KeySql</span><span style="color:#f92672">(</span>genId <span style="color:#f92672">=</span> SegmentIdGenerator<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">private</span> Long id<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h2 id="事务处理">事务处理</h2>
+<blockquote>
+<p>思考一个问题，前面说分表时以多线程执行每个分片SQL，事务如何处理</p>
+</blockquote>
+<p>ShardingJDBC默认使用本地事务，支持绝大部分单应用场景下跨库和非跨库事务。<a href="https://shardingsphere.apache.org/document/current/cn/features/transaction/use-norms/">官网说明</a></p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>事务</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>普通sql</td>
+<td>支持</td>
+<td>单个事务连接commit or rollback</td>
+</tr>
+<tr>
+<td>分表SQL</td>
+<td>支持</td>
+<td>多个事务连接commit or rollback，不能处理commit阶段异常(数据库宕机、网络中断)</td>
+</tr>
+<tr>
+<td>分库SQL</td>
+<td>支持</td>
+<td>多个事务连接commit or rollback，不能处理commit阶段异常(数据库宕机、网络中断)</td>
+</tr>
+</tbody>
+</table>
+<p>源码中本地事务的实现如下</p>
+<blockquote>
+<p>对prod_sync_p_shopee表根据id更新，测试库分了三张表，开启三条数据库连接并发执行update语句</p>
+</blockquote>
+<p>提交事务，遍历当前事务所有的事务Connection，依次执行commit()</p>
+<p><img src="http://zentao.epean.cn/zentao/file-read-11179.png" alt="commit"></p>
+<p>异常时回滚事务，遍历当前事务打开的所有事务Connection，依次执行rollback()回滚数据</p>
+<p><img src="http://zentao.epean.cn/zentao/file-read-11180.png" alt="rollback"></p>
+<h1 id="遇到的问题">遇到的问题</h1>
+<h2 id="提前初始化陷阱">提前初始化陷阱</h2>
+<p>提前初始化导致事务失效</p>
+<p>shiroFilter引入了UserService。 导致bean在BeanPostProcessor之前被初始化，AOP基于BeanPostProcessor实现事务导致相关的bean不生效</p>
+<p>详细看这个：<a href="https://www.jianshu.com/p/b1209cd3686d">引入shiro后userService事务不生效原因</a></p>
+<h2 id="分表关联笛卡尔积">分表关联笛卡尔积</h2>
+<p>父子表10*10</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> t_parent <span style="color:#66d9ef">as</span> p <span style="color:#66d9ef">inner</span> <span style="color:#66d9ef">join</span> t_detail <span style="color:#66d9ef">as</span> d <span style="color:#66d9ef">on</span> d.p_id<span style="color:#f92672">=</span>p.id
+</code></pre></div><p>如果父子表都有分表，会关联t_parent0-9 * t_detail0_9 执行100条sql语句</p>
+<p>解决方案是绑定父子表分片，这样t_parent_0至于t_detail_0 连接查询，执行10条sql语句</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">spring.shardingsphere.rules.sharding.binding-tables[0]=t_parent,t_detail
+</code></pre></div><blockquote>
+<p>这个问题在生产上造成了两周系统卡顿，没仔细阅读官网文档</p>
+</blockquote>
+<h2 id="特殊sql支持">特殊SQL支持</h2>
+<p>特殊的sql不支持，类似下面这些</p>
+<p>insert into select * from xxx;</p>
+<p>left join 分表table</p>
+<p>非分表table相关sql用动态数据源注解切换为普通数据源。分表table改写sql用其他方式实现</p>
+<h1 id="总结">总结</h1>
+<p>上线分表后有两个问题</p>
+<ol>
+<li>未做父子表关联绑定，查询笛卡尔积，导致生产系统两周数据库高负载。父子分片绑定后解决</li>
+<li>部分sql不支持，报错。 统一排查报错原因一个个改</li>
+</ol>
+<p>分表看起来香，落地难。要解决数据源、事务、分布式id、特殊sql处理这些问题，还不太成熟。如果从0设计一个系统，会倾向于分布式数据库。</p>
+<h1 id="参考资料">参考资料</h1>
+<p><a href="https://shardingsphere.apache.org/document/5.0.0/en/overview/">ShardingSphere官网文档</a></p>
+<p><a href="https://www.cnblogs.com/wuer888/p/14531046.html">ShardingJDBC分片算法和解析流程</a></p>
+<p><a href="https://tech.meituan.com/2019/03/07/open-source-project-leaf.html">美团分布式ID生成服务</a></p>
+<p><a href="https://tech.meituan.com/2016/11/18/dianping-order-db-sharding.html">大众点评订单系统分库分表实践</a></p>
+<p><a href="https://www.cnblogs.com/qlqwjy/p/13423021.html">基于AbstractRoutingDataSource实现动态数据源</a></p>
+<p><a href="https://www.jianshu.com/p/b1209cd3686d">引入shiro后userService事务不生效原因</a></p>
+
 		</section>
 
 		<div class="post-tags">
